@@ -19,11 +19,11 @@ library(fitzRoy)
 #===============================================================================
 
 # Get most recent round number
-total_rounds = fetch_results_afl()
+total_rounds = fetch_results_afl(season = 2021)
 total_rounds = max(total_rounds$round.roundNumber, na.rm = TRUE)
 
 for (i in 1:total_rounds){
-  assign(paste("player_stats_round_", i, sep = ""), fetch_player_stats_afl(round = i))
+  assign(paste("player_stats_round_", i, sep = ""), fetch_player_stats_afl(season = 2021, round = i))
 }
 
 #===============================================================================
@@ -32,15 +32,15 @@ for (i in 1:total_rounds){
 
 # Create function to tidy output for each round's player stats
 clean_player_stats <- function(df){
-    clean_df <- df %>%
+  clean_df <- df %>%
     transmute(
       player_name = paste(player.givenName,player.surname),
-      round_number = round.name,
+      round_number = round.roundNumber,
       fantasy_points = dreamTeamPoints,
       CBAs = extendedStats.centreBounceAttendances,
       kick_ins = extendedStats.kickins,
       team = team.name)
-    return(clean_df)}
+  return(clean_df)}
 
 # Get list of player stats for each round
 player_stats_list = ls()
@@ -58,7 +58,7 @@ player_stats_total <- bind_rows(player_stats_list)
 #===============================================================================
 
 for (i in 1:total_rounds){
-  assign(paste("match_results_round_", i, sep = ""), fetch_results_afl(round = i))
+  assign(paste("match_results_round_", i, sep = ""), fetch_results_afl(season = 2021, round = i))
 }
 
 # Get CBAs and kick in data
@@ -66,7 +66,7 @@ for (i in 1:total_rounds){
 clean_match_results <- function(df){
   clean_df <- df %>%
     transmute(
-      round_number = round.name,
+      round_number = round.roundNumber,
       total_CBAs = awayTeamScore.matchScore.goals + homeTeamScore.matchScore.goals + 4,
       hometeam_kick_ins = homeTeamScore.matchScore.behinds,
       awayteam_kick_ins = awayTeamScore.matchScore.behinds,
