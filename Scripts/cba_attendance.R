@@ -158,7 +158,6 @@ combined_stats_table <-
 #                                                          #
 ##%######################################################%##
 
-<<<<<<< HEAD
 player_details <- readRDS("Data/player_details.RDS")
 combined_stats_table <- combined_stats_table %>% left_join(player_details)
 
@@ -203,11 +202,3 @@ combined_stats_table %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
   head(10)
-=======
-mean_cba_attendance <-
-  combined_stats_table %>%
-  select(-contains("kick_ins")) %>%
-  group_by(player_name, team) %>%
-  summarise(mean_CBA_attendance = mean(CBA_percentage)) %>%
-  arrange(desc(mean_CBA_attendance))
->>>>>>> bf359827293a2e5b74fc079aed1a11143096675c
