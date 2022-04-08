@@ -8,6 +8,9 @@
 library(tidyverse)
 library(fitzRoy)
 
+# Set Season of interest
+season = 2021
+
 ##%######################################################%##
 #                                                          #
 ####                    Get CBA Data                    ####
@@ -19,11 +22,14 @@ library(fitzRoy)
 #===============================================================================
 
 # Get most recent round number
-total_rounds = fetch_results_afl()
+total_rounds = fetch_results_afl(season = season)
 total_rounds = max(total_rounds$round.roundNumber, na.rm = TRUE)
 
+# If total rounds greater than 23, make it just 23 (to exclude finals)
+total_rounds <- ifelse(total_rounds > 23, 23L, total_rounds)
+
 for (i in 1:total_rounds){
-  assign(paste("player_stats_round_", i, sep = ""), fetch_player_stats_afl(round = i))
+  assign(paste("player_stats_round_", i, sep = ""), fetch_player_stats_afl(season = season,round = i))
 }
 
 #===============================================================================
@@ -38,7 +44,26 @@ clean_player_stats <- function(df){
       round_number = round.name,
       fantasy_points = dreamTeamPoints,
       CBAs = extendedStats.centreBounceAttendances,
+      TOG = timeOnGroundPercentage,
       kick_ins = extendedStats.kickins,
+      kicks,
+      handballs,
+      disposals,
+      marks,
+      tackles,
+      contestedMarks,
+      uncontestedMarks = marks - contestedMarks,
+      goals,
+      behinds,
+      hitouts,
+      contestedPossessions,
+      uncontestedPossessions,
+      freesFor,
+      freesAgainst,
+      clangers,
+      turnovers,
+      disposalEfficiency,
+      kick_efficiency = extendedStats.kickEfficiency,
       team = team.name)
     return(clean_df)}
 
@@ -58,7 +83,7 @@ player_stats_total <- bind_rows(player_stats_list)
 #===============================================================================
 
 for (i in 1:total_rounds){
-  assign(paste("match_results_round_", i, sep = ""), fetch_results_afl(round = i))
+  assign(paste("match_results_round_", i, sep = ""), fetch_results_afl(season = season,round = i))
 }
 
 # Get CBAs and kick in data
@@ -67,11 +92,15 @@ clean_match_results <- function(df){
   clean_df <- df %>%
     transmute(
       round_number = round.name,
-      total_CBAs = awayTeamScore.matchScore.goals + homeTeamScore.matchScore.goals + 2,
+      total_CBAs = awayTeamScore.matchScore.goals + homeTeamScore.matchScore.goals + 4,
       hometeam_kick_ins = homeTeamScore.matchScore.behinds,
       awayteam_kick_ins = awayTeamScore.matchScore.behinds,
       home_team = match.homeTeam.name,
-      away_team = match.awayTeam.name)
+      away_team = match.awayTeam.name,
+      venue = venue.name,
+      start_time = match.venueLocalStartTime,
+      temperature = weather.tempInCelsius,
+      conditions = weather.weatherType)
   
   clean_df <-
     bind_rows(
@@ -79,12 +108,22 @@ clean_match_results <- function(df){
          select(round_number,
                 total_CBAs,
                 total_kick_ins = awayteam_kick_ins,
-                team = home_team)),
+                team = home_team,
+                opposition_team = away_team,
+                venue,
+                start_time,
+                temperature,
+                conditions)),
       (clean_df %>%
          select(round_number,
                 total_CBAs,
                 total_kick_ins = hometeam_kick_ins,
-                team = away_team)))
+                team = away_team,
+                opposition_team = home_team,
+                venue,
+                start_time,
+                temperature,
+                conditions)))
   
   return(clean_df)}
 
@@ -115,31 +154,51 @@ combined_stats_table <-
 
 ##%######################################################%##
 #                                                          #
-####              Get mean CBA attendance               ####
+####    Add footywire AFL Fantasy positions to table    ####
 #                                                          #
 ##%######################################################%##
 
-mean_cba_attendance <-
-  combined_stats_table %>%
-  select(-contains("kick_ins")) %>%
-  group_by(player_name, team) %>%
-  summarise(mean_CBA_attendance = mean(CBA_percentage)) %>%
-  arrange(desc(mean_CBA_attendance))
+player_details <- readRDS("Data/player_details.RDS")
+combined_stats_table <- combined_stats_table %>% left_join(player_details)
 
 ##%######################################################%##
 #                                                          #
-####          Get net change in CBA attendance          ####
+####     Top 10 players in each position - fantasy      ####
 #                                                          #
 ##%######################################################%##
 
-CBA_attendance_change <-
-  combined_stats_table %>%
-  group_by(player_name, team) %>%
-  mutate(CBA_net_change = CBA_percentage - lag(CBA_percentage))
+# Defender
+combined_stats_table %>%
+  filter(fantasy_defender_status) %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
+  arrange(desc(avg_score)) %>%
+  head(10)
 
-CBA_attendance_change %>%
-  filter(max(row_number()) == 3) %>%
-  summarise(total_CBA_change = sum(CBA_net_change, na.rm = TRUE)) %>%
-  arrange(total_CBA_change)
+# Midfield
+combined_stats_table %>%
+  filter(fantasy_midfield_status) %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
+  arrange(desc(avg_score)) %>%
+  head(10)
 
+# Ruck
+combined_stats_table %>%
+  filter(fantasy_ruck_status) %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
+  arrange(desc(avg_score)) %>%
+  head(10)
 
+# Forward
+combined_stats_table %>%
+  filter(fantasy_forward_status) %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
+  arrange(desc(avg_score)) %>%
+  head(10)
