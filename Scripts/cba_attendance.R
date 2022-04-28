@@ -9,7 +9,7 @@ library(tidyverse)
 library(fitzRoy)
 
 # Set Season of interest
-season = 2021
+season = 2022
 
 ##%######################################################%##
 #                                                          #
@@ -152,14 +152,21 @@ combined_stats_table <-
          kick_in_percentage = round(100*(kick_ins / total_kick_ins), digits = 2)) %>%
   arrange(team, player_name, round_number)
 
+                                                       
 ##%######################################################%##
 #                                                          #
 ####    Add footywire AFL Fantasy positions to table    ####
+####     and get total games played for each player     ####
 #                                                          #
 ##%######################################################%##
 
 player_details <- readRDS("Data/player_details.RDS")
-combined_stats_table <- combined_stats_table %>% left_join(player_details)
+
+combined_stats_table <-
+  combined_stats_table %>%
+  left_join(player_details) %>%
+  group_by(player_name) %>%
+  mutate(games_played = max(row_number(), na.rm = TRUE))
 
 ##%######################################################%##
 #                                                          #
@@ -168,37 +175,61 @@ combined_stats_table <- combined_stats_table %>% left_join(player_details)
 ##%######################################################%##
 
 # Defender
+top_defenders <-
 combined_stats_table %>%
   filter(fantasy_defender_status) %>%
   filter(TOG > 50) %>%
+  filter(games_played >= 3) %>%
   group_by(player_name) %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
-  head(10)
+  head(48) %>%
+  mutate(mean_position_score = mean(avg_score),
+         z_score = scale(avg_score))
 
 # Midfield
+top_midfielders <-
 combined_stats_table %>%
   filter(fantasy_midfield_status) %>%
   filter(TOG > 50) %>%
+  filter(games_played >= 3) %>%
   group_by(player_name) %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
-  head(10)
-
+  head(64) %>%
+  mutate(mean_position_score = mean(avg_score),
+         z_score = scale(avg_score))
 # Ruck
+top_rucks <-
 combined_stats_table %>%
   filter(fantasy_ruck_status) %>%
   filter(TOG > 50) %>%
+  filter(games_played >= 3) %>%
   group_by(player_name) %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
-  head(10)
+  head(16) %>%
+  mutate(mean_position_score = mean(avg_score),
+         z_score = scale(avg_score))
 
 # Forward
+top_forwards <-
 combined_stats_table %>%
   filter(fantasy_forward_status) %>%
   filter(TOG > 50) %>%
+  filter(games_played >= 3) %>%
   group_by(player_name) %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
-  head(10)
+  head(48) %>%
+  mutate(mean_position_score = mean(avg_score),
+         z_score = scale(avg_score))
+
+# Combine into 1 to get redraft ranking
+all_player_rankings <-
+  bind_rows(top_defenders, top_midfielders, top_rucks, top_forwards) %>%
+  group_by(player_name) %>%
+  filter(z_score == max(z_score)) %>%
+  ungroup() %>%
+  arrange(desc(z_score)) %>%
+  mutate(ranking = row_number())
