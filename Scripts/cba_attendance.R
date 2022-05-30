@@ -184,8 +184,9 @@ combined_stats_table %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
   head(48) %>%
+  ungroup() %>%
   mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score))
+         z_score = scale(avg_score)[,1])
 
 # Midfield
 top_midfielders <-
@@ -197,8 +198,9 @@ combined_stats_table %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
   head(64) %>%
+  ungroup() %>%
   mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score))
+         z_score = scale(avg_score)[,1])
 # Ruck
 top_rucks <-
 combined_stats_table %>%
@@ -209,8 +211,9 @@ combined_stats_table %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
   head(16) %>%
+  ungroup() %>%
   mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score))
+         z_score = scale(avg_score)[,1])
 
 # Forward
 top_forwards <-
@@ -222,8 +225,9 @@ combined_stats_table %>%
   summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
   arrange(desc(avg_score)) %>%
   head(48) %>%
+  ungroup() %>%
   mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score))
+         z_score = scale(avg_score)[,1])
 
 # Combine into 1 to get redraft ranking
 all_player_rankings <-
