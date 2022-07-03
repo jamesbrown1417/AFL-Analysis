@@ -13,9 +13,11 @@ season = 2022
 
 ##%######################################################%##
 #                                                          #
-####                    Get CBA Data                    ####
+####                      Get data                      ####
 #                                                          #
 ##%######################################################%##
+
+main <- function(season = 2022){
 
 #===============================================================================
 # Fetch player stats for each round
@@ -64,6 +66,7 @@ clean_player_stats <- function(df){
       turnovers,
       disposalEfficiency,
       kick_efficiency = extendedStats.kickEfficiency,
+      ruck_contests_attended = extendedStats.ruckContests,
       team = team.name)
     return(clean_df)}
 
@@ -160,7 +163,7 @@ combined_stats_table <-
 #                                                          #
 ##%######################################################%##
 
-player_details <- readRDS("Data/player_details.RDS")
+player_details <- readRDS("Data/RDS-files/player_details.RDS")
 
 combined_stats_table <-
   combined_stats_table %>%
@@ -170,70 +173,59 @@ combined_stats_table <-
 
 ##%######################################################%##
 #                                                          #
-####     Top 10 players in each position - fantasy      ####
+####        Make round number an ordered factor         ####
 #                                                          #
 ##%######################################################%##
 
-# Defender
-top_defenders <-
-combined_stats_table %>%
-  filter(fantasy_defender_status) %>%
-  filter(TOG > 50) %>%
-  filter(games_played >= 3) %>%
-  group_by(player_name) %>%
-  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
-  arrange(desc(avg_score)) %>%
-  head(48) %>%
-  ungroup() %>%
-  mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score)[,1])
+combined_stats_table$round_number <-
+  factor(combined_stats_table$round_number,
+         levels = c("Round 1",
+                    "Round 2",
+                    "Round 3",
+                    "Round 4",
+                    "Round 5",
+                    "Round 6",
+                    "Round 7",
+                    "Round 8",
+                    "Round 9",
+                    "Round 10",
+                    "Round 11",
+                    "Round 12",
+                    "Round 13",
+                    "Round 14",
+                    "Round 15",
+                    "Round 16",
+                    "Round 17",
+                    "Round 18",
+                    "Round 19",
+                    "Round 20",
+                    "Round 21",
+                    "Round 22",
+                    "Round 23"),
+         ordered = TRUE)
 
-# Midfield
-top_midfielders <-
-combined_stats_table %>%
-  filter(fantasy_midfield_status) %>%
-  filter(TOG > 50) %>%
-  filter(games_played >= 3) %>%
-  group_by(player_name) %>%
-  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
-  arrange(desc(avg_score)) %>%
-  head(64) %>%
-  ungroup() %>%
-  mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score)[,1])
-# Ruck
-top_rucks <-
-combined_stats_table %>%
-  filter(fantasy_ruck_status) %>%
-  filter(TOG > 50) %>%
-  filter(games_played >= 3) %>%
-  group_by(player_name) %>%
-  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
-  arrange(desc(avg_score)) %>%
-  head(16) %>%
-  ungroup() %>%
-  mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score)[,1])
+combined_stats_table <-
+  combined_stats_table %>%
+  arrange(player_name, round_number) %>%
+  mutate(Season = season) %>%
+  relocate(total_CBAs, CBA_percentage, .after = CBAs) %>%
+  relocate(Season, .after = player_name)
 
-# Forward
-top_forwards <-
-combined_stats_table %>%
-  filter(fantasy_forward_status) %>%
-  filter(TOG > 50) %>%
-  filter(games_played >= 3) %>%
-  group_by(player_name) %>%
-  summarise(avg_score = mean(fantasy_points, na.rm = TRUE)) %>%
-  arrange(desc(avg_score)) %>%
-  head(48) %>%
-  ungroup() %>%
-  mutate(mean_position_score = mean(avg_score),
-         z_score = scale(avg_score)[,1])
+##%######################################################%##
+#                                                          #
+####              Write out to Data folder              ####
+#                                                          #
+##%######################################################%##
 
-# Combine into 1 to get redraft ranking
-all_player_rankings <-
-  bind_rows(top_defenders, top_midfielders, top_rucks, top_forwards) %>%
-  group_by(player_name) %>%
-  filter(z_score == max(z_score)) %>%
-  ungroup() %>%
-  arrange(desc(z_score)) %>%
-  mutate(ranking = row_number())
+filename_csv = paste("Data/CSV-files/combined_stats_table_", season, ".csv", sep = "")
+filename_rds = paste("Data/RDS-files/combined_stats_table_", season, ".rds", sep = "")
+
+write_csv(combined_stats_table, filename_csv)
+write_rds(combined_stats_table, filename_rds)}
+
+# Run function for various years
+main(season = 2022)
+#main(season = 2021)
+# main(season = 2020)
+# main(season = 2019)
+# main(season = 2018)
