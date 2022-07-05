@@ -25,7 +25,9 @@ rossi_scores <-
     1645,
     1535,
     1521,
-    1603)
+    1603,
+    1696,
+    1704)
 
 # Pansini scores
 pansini_scores <-
@@ -39,7 +41,9 @@ pansini_scores <-
     1506,
     1701,
     1489,
-    1594)
+    1594,
+    1534,
+    1649)
 
 # Brown scores
 brown_scores <-
@@ -53,7 +57,9 @@ brown_scores <-
     1467,
     1414,
     1464,
-    1522)
+    1522,
+    1618,
+    1731)
 
 # Kirch Scores
 kirch_scores <-
@@ -67,7 +73,9 @@ kirch_scores <-
     1391,
     1441,
     1420,
-    1422)
+    1422,
+    1550,
+    1307)
 
 # Bish Scores
 bish_scores <-
@@ -81,7 +89,9 @@ bish_scores <-
     1675,
     1479,
     1508,
-    1613)
+    1613,
+    1453,
+    1661)
 
 # Baron Scores
 baron_scores <-
@@ -95,7 +105,9 @@ baron_scores <-
     1694,
     1726,
     1665,
-    1731)
+    1731,
+    1677,
+    1696)
 
 # Paul Scores
 paul_scores <-
@@ -109,10 +121,10 @@ paul_scores <-
     1511,
     1468,
     1572,
-    1736)
+    1736,
+    1569,
+    1643)
 
-  
-  
 # Mara Scores
 mara_scores <-
   c(1583,
@@ -125,7 +137,9 @@ mara_scores <-
     1551,
     1640,
     1551,
-    1542)
+    1542,
+    1493,
+    1465)
 
 ##%######################################################%##
 #                                                          #
@@ -241,4 +255,3 @@ bind_rows(
   paul_summary,
   rossi_summary
 )
-

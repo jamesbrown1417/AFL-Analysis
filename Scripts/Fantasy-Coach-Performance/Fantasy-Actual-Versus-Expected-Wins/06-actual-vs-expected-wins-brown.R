@@ -26,7 +26,7 @@ all_fixtures <- data.frame(perms(c(1,2,3,4,5,7,8)))
 
 ##%######################################################%##
 #                                                          #
-####           Rename and add rounds 8 to 11            ####
+####           Rename and add rounds 8 to 17            ####
 #                                                          #
 ##%######################################################%##
 
@@ -43,6 +43,8 @@ all_fixtures <-
             "Round 9" = X2,
             "Round 10" = X3,
             "Round 11" = X4,
+            "Round 15" = X5,
+            "Round 16" = X6,
             "Total Wins" = 0)
 
 ##%######################################################%##
@@ -172,7 +174,29 @@ all_fixtures %>%
              `Round 11` == 4 ~ 1613,  # Bish
              `Round 11` == 3 ~ 1731,  # Baron
              `Round 11` == 2 ~ 1736,  # Paul
-             `Round 11` == 1 ~ 1542)) # Mara
+             `Round 11` == 1 ~ 1542), # Mara
+         
+         `Round 15` =
+           case_when(
+             `Round 15` == 8 ~ 1696,  # Rossi
+             `Round 15` == 7 ~ 1534,  # Pansini
+             `Round 15` == 6 ~ 1618,  # Brown
+             `Round 15` == 5 ~ 1550,  # Kirch
+             `Round 15` == 4 ~ 1453,  # Bish
+             `Round 15` == 3 ~ 1677,  # Baron
+             `Round 15` == 2 ~ 1569,  # Paul
+             `Round 15` == 1 ~ 1493), # Mara
+         
+         `Round 16` =
+           case_when(
+             `Round 16` == 8 ~ 1704,  # Rossi
+             `Round 16` == 7 ~ 1649,  # Pansini
+             `Round 16` == 6 ~ 1731,  # Brown
+             `Round 16` == 5 ~ 1307,  # Kirch
+             `Round 16` == 4 ~ 1661,  # Bish
+             `Round 16` == 3 ~ 1696,  # Baron
+             `Round 16` == 2 ~ 1643,  # Paul
+             `Round 16` == 1 ~ 1465)) # Mara
          
 ##%######################################################%##
 #                                                          #
@@ -192,9 +216,11 @@ all_results <-
   mutate(`Round 8` = ifelse(`Round 8` < 1467, TRUE, FALSE)) %>%
   mutate(`Round 9` = ifelse(`Round 9` < 1414, TRUE, FALSE)) %>%
   mutate(`Round 10` = ifelse(`Round 10` < 1464, TRUE, FALSE)) %>%
-  mutate(`Round 11` = ifelse(`Round 11` < 1522, TRUE, FALSE))
+  mutate(`Round 11` = ifelse(`Round 11` < 1522, TRUE, FALSE)) %>%
+  mutate(`Round 15` = ifelse(`Round 15` < 1618, TRUE, FALSE)) %>%
+  mutate(`Round 16` = ifelse(`Round 16` < 1731, TRUE, FALSE))
 
-all_results$`Total Wins` <- rowSums(all_results[,1:11])
+all_results$`Total Wins` <- rowSums(all_results[,1:13])
 
 ##%######################################################%##
 #                                                          #
@@ -207,16 +233,16 @@ all_results_summary <-
 all_results %>%
   summarise(
     min = min(`Total Wins`),
-    median = median(`Total Wins`),
+    mode = Mode(`Total Wins`),
     mean = mean(`Total Wins`),
     max = max(`Total Wins`))
 
 # Plot
 all_results %>%
-  ggplot(mapping = aes(x = `Total Wins`, fill = `Total Wins` == 3)) +
+  ggplot(mapping = aes(x = `Total Wins`, fill = `Total Wins` == 5)) +
   geom_histogram(binwidth = 1, colour = "black") +
   scale_fill_manual(values = c("grey", "green"), name = "", labels = c("Potential Wins", "Observed Wins")) +
-  scale_x_continuous(limits = c(-1,8), breaks = seq(0, 8, by = 1)) +
+  scale_x_continuous(limits = c(1,11), breaks = seq(0, 9, by = 1)) +
   ggtitle("James Brown", subtitle = "Number of wins over all possible permutations of the fixtures") +
   theme_fivethirtyeight()
 
@@ -232,5 +258,5 @@ ggsave("Output/expected_vs_observed_wins_brown.png")
 observed_vs_expected_wins_06 <-
   tibble(
     Coach = "James Brown",
-    `Observed Wins` = 3,
-    `Expected Wins` = all_results_summary$median)
+    `Observed Wins` = 5,
+    `Expected Wins` = all_results_summary$mode)
