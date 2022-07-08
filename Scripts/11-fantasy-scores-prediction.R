@@ -186,64 +186,6 @@ performing_below_avg_5 <-
 
 ##%######################################################%##
 #                                                          #
-####              Get 3 and 5 game medians              ####
-#                                                          #
-##%######################################################%##
-
-# 5-game median
-five_game_median <-
-  combined_stats_table %>%
-  filter(games_played >= 5) %>%
-  filter(TOG > 70) %>%
-  group_by(player_name) %>%
-  filter(row_number() > (max(row_number()) - 5)) %>%
-  summarise(median_score_last_5 = median(fantasy_points, na.rm = TRUE)) %>%
-  ungroup() %>%
-  arrange(desc(median_score_last_5))
-
-
-# overall median
-total_median <-
-  combined_stats_table %>%
-  filter(games_played >= 5) %>%
-  filter(TOG > 70) %>%
-  group_by(player_name) %>%
-  summarise(median_score_total = median(fantasy_points, na.rm = TRUE)) %>%
-  ungroup() %>%
-  arrange(desc(median_score_total))
-
-##%######################################################%##
-#                                                          #
-####   Find in-form and out-of-form players by median   ####
-#                                                          #
-##%######################################################%##
-
-# Find Players who have gained form
-all_medians <-
-  total_median %>%
-  left_join(five_game_median) %>%
-  mutate(last_5_vs_median = median_score_last_5 - median_score_total)
-
-performing_above_median_5 <-
-  all_medians %>%
-  arrange(desc(last_5_vs_median)) %>%
-  head(30)
-
-running_hot_last_5_median <-
-  all_medians %>%
-  transmute(player_name, median_score_last_5 = round(median_score_last_5, 2)) %>%
-  arrange(desc(median_score_last_5)) %>%
-  filter(median_score_last_5 > 80)
-
-# Find players who have lost form
-performing_below_median_5 <-
-  all_medians %>%
-  arrange(last_5_vs_median) %>%
-  filter(median_score_total >= 70) %>%
-  head(30)
-
-##%######################################################%##
-#                                                          #
 ####   Measure player consistency and floor / ceiling   ####
 #                                                          #
 ##%######################################################%##
