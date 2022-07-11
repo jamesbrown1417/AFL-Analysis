@@ -7,7 +7,7 @@
 
 # Libraries and data
 library(tidyverse)
-combined_stats_table <- read_rds("Data/RDS-files/combined_stats_table_2022.rds")
+combined_stats_table <- read_rds("Data/RDS-files/combined_stats_table_2021.rds")
 
 ##%######################################################%##
 #                                                          #
@@ -84,4 +84,3 @@ all_player_rankings <-
   ungroup() %>%
   arrange(desc(z_score)) %>%
   mutate(ranking = row_number())
-

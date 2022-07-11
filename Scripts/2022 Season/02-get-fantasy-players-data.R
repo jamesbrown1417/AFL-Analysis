@@ -228,7 +228,7 @@ write_rds(combined_stats_table, filename_rds)}
 
 # Run function for various years
 main(season = 2022)
-#main(season = 2021)
+# main(season = 2021)
 # main(season = 2020)
 # main(season = 2019)
 # main(season = 2018)

@@ -25,7 +25,7 @@ driver.find_element(By.XPATH, '//*[@id="login-root"]/div/form/div/div[2]/div/div
 driver.find_element(By.XPATH, '//*[@id="login-root"]/div/form/button').click()
 
 # Wait for page to load
-driver.implicitly_wait(10)
+driver.implicitly_wait(5)
 
 # Navigate to draft overview page
 driver.find_element(By.XPATH, '//*[@id="root"]/div[2]/div[2]/div[1]/div/div[2]/div[3]/div/a').click()

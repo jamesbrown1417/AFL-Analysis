@@ -1,0 +1,285 @@
+---
+title: "Season Series"
+subtitle: "2022 Season"
+format:
+  html:
+      df-print: kable
+      theme: cyborg
+      self-contained: true
+editor: visual
+---
+
+```{r}
+#| label: load-packages-and-data
+#| include: false
+library(tidyverse)
+getwd()
+library(rvest)
+combined_stats_table <- read_rds("../../../../Data/RDS-files/combined_stats_table_2022.rds")
+```
+
+```{r}
+#| label: process-data
+#| include: false
+
+###%######################################################%##
+#                                                          #
+####             Read in HTML of team pages             ####
+#                                                          #
+##%######################################################%##
+
+#===============================================================================
+# Get list of files in Data/HTML-files folder
+#===============================================================================
+
+matchup_files <- dir("../../../../Data/HTML-files/matchups")
+matchup_files <- sort(matchup_files)
+
+#===============================================================================
+# Create function that reads html and outputs table
+#===============================================================================
+
+get_matchups <- function(html_path) {
+  # Read HTML from path
+  full_path <- paste("../../../../Data/HTML-files/matchups/", html_path, sep = "")
+  html_source <- read_html(full_path)
+  
+  # Create matchups vector and return
+  matchups <-
+    html_source %>%
+    html_elements(".bmYPWD") %>%
+    html_text2()
+  
+  return(matchups)
+}
+
+all_matchups <- map(matchup_files, get_matchups)
+
+#===============================================================================
+# Get rid of coach names from matchups list
+#===============================================================================
+
+# Function that strips names from string
+remove_coach_name <- function(new_string_vec){
+  new_string_vec <- str_remove_all(new_string_vec, "Jonathon R.")
+  new_string_vec <- str_remove_all(new_string_vec, "James B.")
+  new_string_vec <- str_remove_all(new_string_vec, "Sam B.")
+  new_string_vec <- str_remove_all(new_string_vec, "Nick K.")
+  new_string_vec <- str_remove_all(new_string_vec, "Nicholas P.")
+  new_string_vec <- str_remove_all(new_string_vec, "Alex M.")
+  new_string_vec <- str_remove_all(new_string_vec, "Matt B.")
+  new_string_vec <- str_remove_all(new_string_vec, "Paul A.")
+  return(new_string_vec)
+}
+
+# Apply to list
+all_matchups <- map(all_matchups, remove_coach_name)
+
+#===============================================================================
+# Get rid of full time from matchups list
+#===============================================================================
+
+# Function that strips names from string
+remove_full_time <- function(new_string_vec){
+  new_string_vec <- str_remove_all(new_string_vec, "Full time")
+  return(new_string_vec)
+}
+
+# Apply to list
+all_matchups <- map(all_matchups, remove_full_time)
+
+#===============================================================================
+# Loop through matchups and extract results, push to a list
+#===============================================================================
+
+# Results list
+results <- list()
+
+# Loop to add to results list
+for (j in 1:length(all_matchups)) {
+  # Get round matchups and round number
+  matchups <- all_matchups[[j]]
+  this_round <- paste("Round", j)
+  
+  # Round results list
+  round_results_list <- list()
+  
+  for (i in 1:4) {
+    # Get results from fixture
+    scores <- str_extract_all(matchups[i], "[0-9]{3,4}")[[1]]
+    teams <-
+      str_extract_all(matchups[i], "\\n[A-Za-z '4]{5,}\\n")[[1]] %>% str_remove_all("\\n")
+    
+    # Get result tibble
+    round_results <-
+      bind_rows(
+        tibble(
+          team = teams[1],
+          score = scores[1],
+          opposition = teams[2],
+          opposition_score = scores[2],
+          round_number = this_round
+        ),
+        tibble(
+          team = teams[2],
+          score = scores[2],
+          opposition = teams[1],
+          opposition_score = scores[1],
+          round_number = this_round
+        )
+      )
+    
+    round_results_list[[i]] <- round_results
+  }
+  results[[j]] <- bind_rows(round_results_list)
+}
+
+# Bind together dataframes to get all results
+all_results <- bind_rows(results)
+
+# Fix round numbers 12, 13 and 14
+all_results$round_number <- ifelse(all_results$round_number == "Round 12", "Round 15", all_results$round_number)
+all_results$round_number <- ifelse(all_results$round_number == "Round 13", "Round 16", all_results$round_number)
+all_results$round_number <- ifelse(all_results$round_number == "Round 14", "Round 17", all_results$round_number)
+
+# Make round number an ordered factor
+all_results$round_number <-
+  factor(
+    all_results$round_number,
+    levels = c(
+      "Round 1",
+      "Round 2",
+      "Round 3",
+      "Round 4",
+      "Round 5",
+      "Round 6",
+      "Round 7",
+      "Round 8",
+      "Round 9",
+      "Round 10",
+      "Round 11",
+      "Round 15",
+      "Round 16",
+      "Round 17"
+    ),
+    ordered = TRUE
+  )
+
+# Make score and opposition score numeric variables
+all_results$score <- as.numeric(all_results$score)
+all_results$opposition_score <- as.numeric(all_results$opposition_score)
+
+# Add win variable
+all_results$result <- ifelse(all_results$score > all_results$opposition_score, "Win", "Loss")
+all_results$result <- ifelse(all_results$score == all_results$opposition_score, "Draw", all_results$result)
+
+# Season series
+season_series <-
+all_results %>%
+  mutate(margin = as.numeric(score) - as.numeric(opposition_score)) %>%
+  group_by(team, opposition) %>%
+  summarise(`Season Series Margin` = sum(margin))
+
+```
+
+
+::: panel-tabset
+
+## Aoukar
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "DoYouLikeThat") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+## John Rossi
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "Welcome To The Pig Sty") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+## Baron
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "Monsieur Johnson") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+## Mara
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "The Big 4 Bull") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+## Pansini
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "Putin's Peacekeepers") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+## Bish
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "the best team") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+## Brown
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "BuIIs on parade") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+## Kirch
+
+```{r}
+#| echo: false
+
+season_series %>%
+  ungroup() %>%
+  filter(team == "If Jorginho Scored That Penalty") %>%
+  select(Opposition = opposition, `Season Series Margin`) %>%
+  arrange(desc(`Season Series Margin`))
+```
+
+:::
+

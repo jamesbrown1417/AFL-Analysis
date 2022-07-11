@@ -1,0 +1,686 @@
+---
+title: "Rebound 50 Heatmaps - 2021"
+author: "James Brown"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: lumen
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+# Data setup
+
+# Libraries and data
+library(tidyverse)
+library(ztable)
+combined_stats_table <- read_rds("Data/RDS-files/combined_stats_table_2021.rds")
+
+# Options
+options(ztable.type="html")
+options(ztable.colnames.bold=TRUE)
+```
+
+```{r}
+# Update combined stats table to have total uncontested marks by team and player's percentage contribution
+combined_stats_table <-
+combined_stats_table %>%
+  group_by(team, round_number) %>%
+  mutate(total_rebound_50s = sum(rebound50s)) %>%
+  ungroup() %>%
+  mutate(rebound_50s_percentage = round((rebound50s / total_rebound_50s)*100, digits = 2))
+```
+
+# Adelaide Crows
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Adelaide Crows") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Adelaide Crows") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Brisbane Lions
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Brisbane Lions") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Brisbane Lions") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Carlton
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Carlton") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Carlton") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Collingwood
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Collingwood") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Collingwood") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Essendon
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Essendon") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Essendon") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Fremantle
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Fremantle") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Fremantle") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Geelong Cats
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Geelong Cats") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Geelong Cats") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Gold Coast Suns
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Gold Coast Suns") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Gold Coast Suns") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# GWS Giants
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "GWS Giants") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "GWS Giants") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Hawthorn
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Hawthorn") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Hawthorn") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Melbourne
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Melbourne") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Melbourne") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# North Melbourne
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "North Melbourne") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "North Melbourne") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Port Adelaide
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Port Adelaide") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Port Adelaide") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Richmond
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Richmond") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Richmond") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# St Kilda
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "St Kilda") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "St Kilda") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Sydney Swans
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Sydney Swans") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Sydney Swans") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# West Coast Eagles
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  distinct(player_name, round_number, team, .keep_all = TRUE) %>%
+  filter(team == "West Coast Eagles") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "West Coast Eagles") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```
+
+# Western Bulldogs
+
+```{r results='asis'}
+# Create dataframe
+rebound_50s <-
+  combined_stats_table %>%
+  filter(team == "Western Bulldogs") %>%
+  select(`Player Name` = player_name, rebound_50s_percentage, round_number) %>%
+  group_by(`Player Name`) %>%
+  filter(max(rebound_50s_percentage, na.rm = TRUE) > 0) %>%
+  ungroup() %>%
+  arrange(round_number) %>%
+  pivot_wider(id_cols = `Player Name`, names_from = round_number, values_from = rebound_50s_percentage)
+
+rebound_50s_avgs <-
+combined_stats_table %>%
+  filter(team == "Western Bulldogs") %>%
+  group_by(player_name) %>%
+  summarise(`Mean Rebound 50 Percentage` = mean(rebound_50s_percentage, na.rm = TRUE)) %>%
+  rename(`Player Name` = player_name)
+
+heatmap <- rebound_50s %>% left_join(rebound_50s_avgs) %>% arrange(desc(`Mean Rebound 50 Percentage`))
+
+# Make playernames the row labels
+heatmap <- as.data.frame(heatmap)
+rownames(heatmap) <- heatmap$`Player Name`
+heatmap <- heatmap %>% select(-`Player Name`)
+
+# Make heatmap
+ztable(heatmap,
+       align = "ccccccccccccccccccccc") %>%
+  makeHeatmap(palette = "Oranges") %>%
+  vlines(type = "all") %>%
+  hlines(type = "all")
+```

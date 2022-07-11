@@ -44,6 +44,39 @@ get_matchups <- function(html_path) {
 all_matchups <- map(matchup_files, get_matchups)
 
 #===============================================================================
+# Get rid of coach names from matchups list
+#===============================================================================
+
+# Function that strips names from string
+remove_coach_name <- function(new_string_vec){
+  new_string_vec <- str_remove_all(new_string_vec, "Jonathon R.")
+  new_string_vec <- str_remove_all(new_string_vec, "James B.")
+  new_string_vec <- str_remove_all(new_string_vec, "Sam B.")
+  new_string_vec <- str_remove_all(new_string_vec, "Nick K.")
+  new_string_vec <- str_remove_all(new_string_vec, "Nicholas P.")
+  new_string_vec <- str_remove_all(new_string_vec, "Alex M.")
+  new_string_vec <- str_remove_all(new_string_vec, "Matt B.")
+  new_string_vec <- str_remove_all(new_string_vec, "Paul A.")
+  return(new_string_vec)
+}
+
+# Apply to list
+all_matchups <- map(all_matchups, remove_coach_name)
+
+#===============================================================================
+# Get rid of full time from matchups list
+#===============================================================================
+
+# Function that strips names from string
+remove_full_time <- function(new_string_vec){
+  new_string_vec <- str_remove_all(new_string_vec, "Full time")
+  return(new_string_vec)
+}
+
+# Apply to list
+all_matchups <- map(all_matchups, remove_full_time)
+
+#===============================================================================
 # Loop through matchups and extract results, push to a list
 #===============================================================================
 
@@ -61,7 +94,7 @@ for (j in 1:length(all_matchups)) {
   
   for (i in 1:4) {
     # Get results from fixture
-    scores <- str_extract_all(matchups[i], "[0-9]{4}")[[1]]
+    scores <- str_extract_all(matchups[i], "[0-9]{3,4}")[[1]]
     teams <-
       str_extract_all(matchups[i], "\\n[A-Za-z '4]{5,}\\n")[[1]] %>% str_remove_all("\\n")
     
@@ -119,6 +152,10 @@ all_results$round_number <-
     ),
     ordered = TRUE
   )
+
+# Make score and opposition score numeric variables
+all_results$score <- as.numeric(all_results$score)
+all_results$opposition_score <- as.numeric(all_results$opposition_score)
 
 # Add win variable
 all_results$result <- ifelse(all_results$score > all_results$opposition_score, "Win", "Loss")
@@ -203,3 +240,9 @@ all_results %>%
   filter(margin >= 0) %>%
   arrange(margin) %>%
   head(10)
+
+# Season series
+all_results %>%
+  mutate(margin = as.numeric(score) - as.numeric(opposition_score)) %>%
+  group_by(team, opposition) %>%
+  summarise(`Season Series Margin` = sum(margin))
