@@ -1,0 +1,11 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/923004/ff46eb8fd2cd4eb1b16812e6b2eb7c94
+bundleId: https://api.rpubs.com/api/v1/document/923004/ff46eb8fd2cd4eb1b16812e6b2eb7c94
+url: http://rpubs.com/jamesbrown1417/923004
+when: 1657587968.81367
+lastSyncTime: 1657587968.81368

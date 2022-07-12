@@ -63,11 +63,9 @@ CBA_change <-
 
 ```
 
-
 ## 20 Biggest Increases and Decreases for the Week
 
 ::: panel-tabset
-
 ## Increases
 
 ```{r}
@@ -109,6 +107,4 @@ decreased_CBAs %>%
         `Prev CBA %` = second_last_CBA_percentage,
          Diff = diff)
 ```
-
 :::
-

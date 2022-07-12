@@ -1,11 +1,12 @@
 ---
-title: "Season Series"
+title: "Season Summary"
 subtitle: "2022 Season"
 format:
   html:
       df-print: kable
-      theme: cyborg
+      theme: cosmo
       self-contained: true
+      toc: true
 editor: visual
 ---
 
@@ -13,7 +14,6 @@ editor: visual
 #| label: load-packages-and-data
 #| include: false
 library(tidyverse)
-getwd()
 library(rvest)
 combined_stats_table <- read_rds("../../../../Data/RDS-files/combined_stats_table_2022.rds")
 ```
@@ -182,9 +182,9 @@ all_results %>%
 
 ```
 
+## Season Series - Overall Margins
 
 ::: panel-tabset
-
 ## Aoukar
 
 ```{r}
@@ -280,6 +280,197 @@ season_series %>%
   select(Opposition = opposition, `Season Series Margin`) %>%
   arrange(desc(`Season Series Margin`))
 ```
+:::
+
+## Ladders
+
+::: panel-tabset
+
+## Wins
+
+```{r}
+#| echo: false
+ladder <-
+  all_results %>%
+  group_by(team) %>%
+  summarise(
+    W = sum(result == "Win"),
+    L = sum(result == "Loss"),
+    D = sum(result == "Draw"),
+    PF = sum(as.numeric(score)),
+    PA = sum(as.numeric(opposition_score)),
+    `%` = round((PF / PA) * 100, digits = 3),
+    Points = 4 * W + 2 * D
+  ) %>%
+  arrange(desc(Points), desc(`%`))
+
+ladder
+```
+
+## Overall Points
+
+```{r}
+#| echo: false
+total_points_ladder <-
+all_results %>%
+  group_by(team) %>%
+  summarise(
+    PF = sum(as.numeric(score)),
+    PA = sum(as.numeric(opposition_score)),
+    `%` = round((PF / PA) * 100, digits = 3)) %>%
+  arrange(desc(PF), desc(`%`))
+    
+total_points_ladder
+```
 
 :::
 
+## Lowest Winning Totals
+
+```{r}
+#| echo: false
+
+all_results %>%
+  filter(result == "Win") %>%
+  arrange(score) %>%
+  head(10) %>%
+  select(
+    Team = team,
+    Score = score,
+    Opponent = opposition,
+    `Opponent Score` = opposition_score,
+    Round = round_number
+  )
+```
+
+## Highest Losing Totals
+
+```{r}
+#| echo: false
+
+all_results %>%
+  filter(result == "Loss") %>%
+  arrange(desc(score)) %>%
+  head(10) %>%
+  select(
+    Team = team,
+    Score = score,
+    Opponent = opposition,
+    `Opponent Score` = opposition_score,
+    Round = round_number
+  )
+```
+
+## Highest and Lowest Scores
+
+::: panel-tabset
+
+## Highest
+
+```{r}
+#| echo: false
+all_results %>%
+  arrange(desc(score)) %>%
+  head(10) %>%
+select(
+    Team = team,
+    Round = round_number,
+    Score = score,
+    Opponent = opposition,
+  )
+```
+
+## Lowest
+
+```{r}
+#| echo: false
+
+all_results %>%
+  arrange(score) %>%
+  head(10) %>%
+  select(
+    Team = team,
+    Round = round_number,
+    Score = score,
+    Opponent = opposition,
+  )
+```
+
+:::
+
+## Club Membership
+
+::: panel-tabset
+
+## 1700 Club
+
+```{r}
+#| echo: false
+
+all_results %>%
+  group_by(team) %>%
+  summarise(`Number of Times in Club` = sum(score >= 1700)) %>%
+  arrange(desc(`Number of Times in Club`)) %>%
+  rename(Team = team)
+```
+
+## 1600 Club
+
+```{r}
+#| echo: false
+
+all_results %>%
+  group_by(team) %>%
+  summarise(`Number of Times in Club` = sum(score >= 1600 & score < 1700)) %>%
+  arrange(desc(`Number of Times in Club`)) %>%
+  rename(Team = team)
+```
+
+## 1500 Club
+
+```{r}
+#| echo: false
+
+all_results %>%
+  group_by(team) %>%
+  summarise(`Number of Times in Club` = sum(score >= 1500 & score < 1600)) %>%
+  arrange(desc(`Number of Times in Club`)) %>%
+  rename(Team = team)
+```
+
+## 1400 Club
+
+```{r}
+#| echo: false
+
+all_results %>%
+  group_by(team) %>%
+  summarise(`Number of Times in Club` = sum(score >= 1400 & score < 1500)) %>%
+  arrange(desc(`Number of Times in Club`)) %>%
+  rename(Team = team)
+```
+
+## 1300 Club
+
+```{r}
+#| echo: false
+
+all_results %>%
+  group_by(team) %>%
+  summarise(`Number of Times in Club` = sum(score >= 1300 & score < 1400)) %>%
+  arrange(desc(`Number of Times in Club`)) %>%
+  rename(Team = team)
+```
+
+## 1200 Club
+
+```{r}
+#| echo: false
+
+all_results %>%
+  group_by(team) %>%
+  summarise(`Number of Times in Club` = sum(score >= 1200 & score < 1300)) %>%
+  arrange(desc(`Number of Times in Club`)) %>%
+  rename(Team = team)
+```
+:::

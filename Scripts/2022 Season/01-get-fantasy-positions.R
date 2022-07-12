@@ -98,5 +98,5 @@ player_details <-
          fantasy_forward_status = ifelse(is.na(fantasy_forward_status), FALSE, fantasy_forward_status))
 
 # Write out to data folder as CSV and Rdata files
-write_csv(player_details, "Data/player_details.csv")
-write_rds(player_details, "Data/player_details.RDS")
+write_csv(player_details, "Data/CSV-files/player_details.csv")
+write_rds(player_details, "Data/RDS-files/player_details.RDS")
