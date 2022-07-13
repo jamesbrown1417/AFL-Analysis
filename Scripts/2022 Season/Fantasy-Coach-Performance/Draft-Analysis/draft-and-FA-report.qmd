@@ -7,6 +7,8 @@ format:
       theme: cosmo
       self-contained: true
       toc: true
+      fig-width: 8
+      fig-height: 6
 editor: visual
 ---
 
@@ -285,7 +287,7 @@ worst_pick_by_round <-
 
 ```
 
-## 20 Best Draft Picks
+## 10 Best Draft Picks
 
 ```{r}
 #| echo: false
@@ -301,7 +303,7 @@ best_draft_picks %>%
     Rank = ranking,
     Diff = difference
   ) %>%
-  head(20)
+  head(10)
 
 ```
 
@@ -321,7 +323,7 @@ best_pick_by_round %>%
 
 ```
 
-## 20 Best FA Pickups
+## 10 Best FA Pickups
 
 ```{r}
 #| echo: false
@@ -334,11 +336,11 @@ best_FA_pickups %>%
     Games = games_played,
     Rank = ranking
   ) %>%
-  head(20)
+  head(10)
 
 ```
 
-## 20 Worst Draft Picks
+## 10 Worst Draft Picks
 
 ```{r}
 #| echo: false
@@ -354,7 +356,7 @@ worst_draft_picks %>%
     Rank = ranking,
     Diff = difference
   ) %>%
-  head(20)
+  head(10)
 
 ```
 
@@ -374,12 +376,12 @@ worst_pick_by_round %>%
 
 ```
 
-## Most Games Missed
+## Most Games Missed by First 10 Drafted Players
 
 ```{r}
 #| echo: false
 
 first_15_player_games_missed %>%
-  select(Team = team,
-         `% of Total Games Missed by First 10 Picks` = percentage_games_from_picks)
+  transmute(Team = team,
+         `% of Total Games Missed by First 10 Picks` = 100 - percentage_games_from_picks)
 ```

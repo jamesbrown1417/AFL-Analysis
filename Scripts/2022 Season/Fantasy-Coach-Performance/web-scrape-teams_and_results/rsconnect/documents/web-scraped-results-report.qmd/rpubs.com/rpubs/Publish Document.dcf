@@ -4,8 +4,8 @@ username:
 account: rpubs
 server: rpubs.com
 hostUrl: rpubs.com
-appId: https://api.rpubs.com/api/v1/document/923004/ff46eb8fd2cd4eb1b16812e6b2eb7c94
-bundleId: https://api.rpubs.com/api/v1/document/923004/ff46eb8fd2cd4eb1b16812e6b2eb7c94
-url: http://rpubs.com/jamesbrown1417/923004
-when: 1657587968.81367
-lastSyncTime: 1657587968.81368
+appId: https://api.rpubs.com/api/v1/document/923078/2bb6eb58d9b042b3b8d04a22ed70de1e
+bundleId: https://api.rpubs.com/api/v1/document/923078/2bb6eb58d9b042b3b8d04a22ed70de1e
+url: http://rpubs.com/publish/claim/923078/99520dbaed2046b783a58af4b46ecaa5
+when: 1657615533.52448
+lastSyncTime: 1657615533.52449

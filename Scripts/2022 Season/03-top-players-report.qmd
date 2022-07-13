@@ -4,7 +4,8 @@ subtitle: "2022 Season"
 format:
   html:
       df-print: paged
-      theme: cyborg
+      theme: cosmo
+      toc: true
       self-contained: true
 editor: visual
 author: James Brown
@@ -141,6 +142,9 @@ top_forwards %>%
 
 ## Overall Player Rankings
 
+::: panel-tabset
+## By SD From Position Average
+
 ```{r}
 #| label: overall-rankings
 #| echo: false
@@ -160,6 +164,121 @@ all_player_rankings <-
 all_player_rankings %>%
   select(`Player` = player_name,
          `Rank` = ranking,
-         `Average Score` = avg_score,
+         `SDs From Position Avg` = z_score,
          `Games Played` = games_played)
 ```
+
+## By Overall Average
+```{r}
+#| label: overall-average
+#| echo: false
+#| rows.print: 16
+#| cols.min.print: 4
+
+all_player_rankings_avg <-
+combined_stats_table %>%
+  select(player_name, fantasy_points, games_played, team, TOG) %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(avg_score = mean(fantasy_points, na.rm = TRUE), games_played = max(games_played, na.rm = TRUE)) %>%
+  arrange(desc(avg_score)) %>%
+  head(176)
+
+all_player_rankings_avg %>%
+  transmute(`Player` = player_name,
+         `Rank` = row_number(),
+         `Average Score` = round(avg_score, 2),
+         `Games Played` = games_played)
+```
+
+## By Total Points
+```{r}
+#| label: total-points
+#| echo: false
+#| rows.print: 16
+#| cols.min.print: 4
+
+all_player_rankings_total <-
+combined_stats_table %>%
+  select(player_name, fantasy_points, games_played, team) %>%
+  group_by(player_name) %>%
+  summarise(total_score = sum(fantasy_points, na.rm = TRUE), games_played = max(games_played, na.rm = TRUE)) %>%
+  arrange(desc(total_score)) %>%
+  head(176)
+
+all_player_rankings_total %>%
+  transmute(`Player` = player_name,
+         `Rank` = row_number(),
+         `Total Score` = round(total_score, 2),
+         `Games Played` = games_played)
+```
+
+:::
+
+## Most Reliable Players
+
+##### Among Players With Avg > 80 and 10+ Games Played
+
+::: panel-tabset
+
+## By Lowest SD
+
+```{r}
+#| label: SD
+#| echo: false
+#| rows.print: 10
+#| cols.min.print: 5
+
+all_player_rankings_sd <-
+  combined_stats_table %>%
+  select(player_name, fantasy_points, games_played, team, TOG) %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(
+    avg_score = mean(fantasy_points, na.rm = TRUE),
+    SD = sd(fantasy_points, na.rm = TRUE),
+    games_played = max(games_played, na.rm = TRUE)) %>%
+  arrange(SD) %>%
+  filter(avg_score > 80) %>%
+  filter(games_played > 10) %>%
+  head(20)
+
+all_player_rankings_sd %>%
+  transmute(`Player` = player_name,
+         `Rank` = row_number(),
+         `Average Score` = round(avg_score, 2),
+         SD = round(SD, 2),
+         `Games Played` = games_played)
+```
+
+## By Highest Floor
+
+```{r}
+#| label: Floor
+#| echo: false
+#| rows.print: 10
+#| cols.min.print: 5
+
+all_player_rankings_floor <-
+  combined_stats_table %>%
+  select(player_name, fantasy_points, games_played, team, TOG) %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(
+    avg_score = mean(fantasy_points, na.rm = TRUE),
+    Floor = min(fantasy_points, na.rm = TRUE),
+    games_played = max(games_played, na.rm = TRUE)) %>%
+  arrange(desc(Floor)) %>%
+  filter(avg_score > 80) %>%
+  filter(games_played > 10) %>%
+  head(20)
+
+all_player_rankings_floor %>%
+  transmute(`Player` = player_name,
+         `Rank` = row_number(),
+         `Average Score` = round(avg_score, 2),
+         Floor = round(Floor, 2),
+         `Games Played` = games_played)
+```
+
+:::
