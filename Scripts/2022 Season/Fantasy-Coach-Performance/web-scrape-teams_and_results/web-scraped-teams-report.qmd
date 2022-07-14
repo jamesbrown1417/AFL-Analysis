@@ -7,6 +7,7 @@ format:
       theme: cosmo
       self-contained: true
       toc: true
+      width: 1000
 editor: visual
 ---
 
@@ -17,9 +18,9 @@ editor: visual
 # Libraries, functions and data
 library(tidyverse)
 library(rvest)
-combined_stats_table <- read_rds("Data/RDS-files/combined_stats_table_2022.rds")
-player_details <- read_rds("Data/RDS-files/player_details.rds")
-draft_recap <- read_csv("Data/CSV-files/draft_recap_2022.csv")
+combined_stats_table <- read_rds("./../../../../Data/RDS-files/combined_stats_table_2022.rds")
+player_details <- read_rds("./../../../../Data/RDS-files/player_details.rds")
+draft_recap <- read_csv("./../../../../Data/CSV-files/draft_recap_2022.csv")
 `%notin%` <- Negate(`%in%`)
 ```
 
@@ -37,7 +38,7 @@ draft_recap <- read_csv("Data/CSV-files/draft_recap_2022.csv")
 # Get list of files in Data/HTML-files folder
 #===============================================================================
 
-team_files <- dir("Data/HTML-files/teams")
+team_files <- dir("./../../../../Data/HTML-files/teams")
 team_files <- sort(team_files)
 
 #===============================================================================
@@ -46,7 +47,7 @@ team_files <- sort(team_files)
 
 get_players <- function(html_path) {
   # Read HTML from path
-  full_path <- paste("Data/HTML-files/teams/", html_path, sep = "")
+  full_path <- paste("./../../../../Data/HTML-files/teams/", html_path, sep = "")
   html_source <- read_html(full_path)
   
   # Create players vector and return
@@ -64,7 +65,7 @@ get_players <- function(html_path) {
 
 get_teams <- function(html_path) {
   # Read HTML from path
-  full_path <- paste("Data/HTML-files/teams/", html_path, sep = "")
+  full_path <- paste("./../../../../Data/HTML-files/teams/", html_path, sep = "")
   html_source <- read_html(full_path)
   
   # Create teams vector and return
@@ -552,143 +553,211 @@ all_fielded_teams_full <-
   all_fielded_teams_full %>%
   left_join(season_averages, by = c("player_name_full" = "player_name"))
 
+##%######################################################%##
+#                                                          #
+####        Make Round Number an ordered factor         ####
+#                                                          #
+##%######################################################%##
+all_fielded_teams_full$round_number <-
+  factor(all_fielded_teams_full$round_number,
+         levels = c("Round 1",
+                    "Round 2",
+                    "Round 3",
+                    "Round 4",
+                    "Round 5",
+                    "Round 6",
+                    "Round 7",
+                    "Round 8",
+                    "Round 9",
+                    "Round 10",
+                    "Round 11",
+                    "Round 12",
+                    "Round 13",
+                    "Round 14",
+                    "Round 15",
+                    "Round 16",
+                    "Round 17",
+                    "Round 18",
+                    "Round 19",
+                    "Round 20",
+                    "Round 21",
+                    "Round 22",
+                    "Round 23"),
+         ordered = TRUE)
+
 ```
 
-## 10 Highest and Lowest Fielded Scores
+## Highest and Lowest Fielded Scores
+#### Injuries and non-playing players excluded
 
 ::: panel-tabset
 
 ## Highest
 
 ```{r}
-all_fielded_teams_full %>% 
-  select(player_name_full,
-         fantasy_points,
-         fantasy_team,
-         round_number,
-         fielded_position) %>%
-  arrange(desc(fantasy_points)) %>%
+#| echo: false
+
+all_fielded_teams_full %>%
+  select(`Player` = player_name_full,
+         `Score` = fantasy_points,
+          TOG,
+         `Team` = fantasy_team,
+         Round = round_number,
+         Position = fielded_position) %>%
+  arrange(desc(Score)) %>%
   head(10)
 ```
 
-
-## Lowest (Injuries and Non-playing players excluded)
+## Lowest
 
 ```{r}
+#| echo: false
+
 all_fielded_teams_full %>%
   filter(!injury_substituted & fielded_position != "Interchange") %>%
   filter(TOG > 50) %>%
-  select(player_name_full,
-         fantasy_points,
-         TOG,
-         fantasy_team,
-         round_number,
-         fielded_position) %>%
-  arrange(fantasy_points) %>%
+  select(`Player` = player_name_full,
+         `Score` = fantasy_points,
+          TOG,
+         `Team` = fantasy_team,
+         Round = round_number,
+         Position = fielded_position) %>%
+  arrange(Score) %>%
   head(10)
 ```
-
 :::
 
 ## Highest and Lowest Fielded Score by Team
+#### Injuries and non-playing players excluded
 
 ::: panel-tabset
 
 ## Highest
 
 ```{r}
+#| echo: false
+
 all_fielded_teams_full %>% 
-  select(fantasy_team,
-         fantasy_points,
-         player_name_full,
-         round_number,
-         fielded_position) %>%
-  arrange(desc(fantasy_points)) %>%
-  group_by(fantasy_team) %>%
+  select(Team = fantasy_team,
+         Score = fantasy_points,
+         TOG,
+         Player = player_name_full,
+         Round = round_number,
+         Position = fielded_position) %>%
+  arrange(desc(Score)) %>%
+  group_by(Team) %>%
   filter(row_number() == min(row_number()))
 ```
 
-## Lowest (Injuries and Non-playing players excluded)
+## Lowest
 
 ```{r}
+#| echo: false
+
 all_fielded_teams_full %>%
   filter(!injury_substituted & fielded_position != "Interchange") %>%
   filter(TOG > 60) %>%
-  select(fantasy_team,
-         fantasy_points,
+  select(Team = fantasy_team,
+         Score = fantasy_points,
          TOG,
-         player_name_full,
-         round_number,
-         fielded_position) %>%
-  arrange(fantasy_points) %>%
-  group_by(fantasy_team) %>%
+         Player = player_name_full,
+         Round = round_number,
+         Position = fielded_position) %>%
+  arrange(Score) %>%
+  group_by(Team) %>%
   filter(row_number() == min(row_number()))
+```
+:::
+
+## Outlier Scores (Biggest Deviation From Overall Average)
+#### Injuries and non-playing players excluded
+
+::: panel-tabset
+
+## Above Average
+
+```{r}
+#| echo: false
+
+all_fielded_teams_full %>%
+  select(Team = fantasy_team,
+         Score = fantasy_points,
+         TOG,
+         Player = player_name_full,
+         Round = round_number,
+         Position = fielded_position,
+         `Season Avg` = average_score) %>%
+  mutate(Diff = Score - `Season Avg`) %>%
+  arrange(desc(Diff)) %>%
+  head(10)
+```
+
+## Below Average
+
+```{r}
+#| echo: false
+
+all_fielded_teams_full %>%
+  filter(fielded_position != "Interchange" & TOG > 50) %>%
+  select(Team = fantasy_team,
+         Score = fantasy_points,
+         TOG,
+         Player = player_name_full,
+         Round = round_number,
+         Position = fielded_position,
+         `Season Avg` = average_score) %>%
+  mutate(Diff = Score - `Season Avg`) %>%
+  arrange(Diff) %>%
+  head(10)
 ```
 
 :::
 
-## Biggest Outlier Scores
+## Loopholed Scores
+
+::: panel-tabset
+
+## Biggest
 
 ```{r}
-all_fielded_teams_full %>%
-  select(fantasy_team,
-         fantasy_points,
-         player_name_full,
-         round_number,
-         fielded_position,
-         average_score) %>%
-  mutate(diff = fantasy_points - average_score) %>%
-  arrange(desc(diff)) %>%
-  head(20)
-```
+#| echo: false
 
-## Smallest Outlier Scores (Injuries excluded)
-
-```{r}
-all_fielded_teams_full %>%
-  filter(fielded_position != "Interchange" & TOG > 50) %>%
-  select(fantasy_team,
-         fantasy_points,
-         player_name_full,
-         round_number,
-         fielded_position,
-         average_score) %>%
-  mutate(diff = fantasy_points - average_score) %>%
-  arrange(diff) %>%
-  head(20)
-```
-
-## Biggest Loopholed Scores
-
-```{r}
 all_fielded_teams_full %>% 
   filter(str_detect(fielded_position, "Emergency")) %>%
-  select(player_name_full,
-         fantasy_points,
-         fantasy_team,
-         round_number,
-         fielded_position) %>%
-  arrange(desc(fantasy_points)) %>%
-  head(20)
+  select(`Player` = player_name_full,
+         `Score` = fantasy_points,
+         TOG,
+         `Team` = fantasy_team,
+         Round = round_number,
+         Position = fielded_position) %>%
+  arrange(desc(Score)) %>%
+  head(10)
 ```
 
-## Smallest Loopholed Scores
+## Smallest
 
 ```{r}
+#| echo: false
+
 all_fielded_teams_full %>% 
   filter(str_detect(fielded_position, "Emergency")) %>%
-  select(player_name_full,
-         fantasy_points,
-         fantasy_team,
-         round_number,
-         fielded_position) %>%
-  arrange(fantasy_points) %>%
-  head(20)
+  select(`Player` = player_name_full,
+         `Score` = fantasy_points,
+          TOG,
+         `Team` = fantasy_team,
+         Round = round_number,
+         Position = fielded_position) %>%
+  arrange(Score) %>%
+  head(10)
 ```
 
-## Loophole usage and performance
+:::
+
+## Loophole Usage and Performance
 
 ```{r}
+#| echo: false
+
 # loophole performance
   all_fielded_teams_full %>% 
   filter(str_detect(fielded_position, "Emergency") | injury_substituted) %>%
@@ -706,20 +775,85 @@ all_fielded_teams_full %>%
   filter(!(fielded_position == "Emergency Forward" & forward_sub_activated > 0)) %>%
   group_by(fantasy_team) %>%
   summarise(avg_loopholed_score = round(mean(fantasy_points, na.rm = TRUE), 2), number_of_loopholes_used = n()) %>%
-  arrange(desc(number_of_loopholes_used))
+  arrange(desc(number_of_loopholes_used)) %>%
+  select(Team = fantasy_team, `Number of Loopholed Players` = number_of_loopholes_used, `Avg Loophole Score` = avg_loopholed_score)
 
 ```
 
-## Full team not fielded
+## Players Who Featured for Multiple Teams
+
+
+## Most Appearances
 
 ```{r}
-    all_fielded_teams_full %>% 
-  filter(fielded_position != "Interchange" & !injury_substituted & TOG != 0 & !is.na(TOG)) %>%
-  group_by(fantasy_team, round_number) %>%
-  mutate(players_fielded = n()) %>%
+#| echo: false
+
+all_fielded_teams_full %>%
+  arrange(player_name_full, round_number) %>%
+  group_by(player_name_full, fantasy_team) %>%
+  summarise(`Games Played` = n()) %>%
+  group_by(player_name_full) %>%
+  filter(n() > 1) %>%
+  mutate( rn = row_number()) %>%
   ungroup() %>%
-  distinct(fantasy_team, round_number, .keep_all = TRUE) %>%
-  group_by(fantasy_team) %>%
-  summarise(num_of_non_full_teams = sum(players_fielded < 18, na.rm = TRUE))
+  transmute(`Player` = player_name_full,
+         `Games Played`,
+         `Team` = fantasy_team,
+         overall_max_rn = max(rn)) %>%
+  group_by(Player) %>%
+  filter(max(row_number()) == overall_max_rn) %>%
+  mutate(rn = row_number()) %>%
+  pivot_wider(id_cols = Player, names_from = rn, values_from = Team, names_prefix = "Team")
+
+```
+
+## Best 5 Players By Team
+
+```{r}
+#| echo: false
+
+all_fielded_teams_full %>%
+  filter(fielded_position != "interchange" & !injury_substituted & TOG > 0 & !is.na(TOG)) %>%
+  group_by(player_name_full, fantasy_team) %>%
+  summarise(`Avg Score` = mean(fantasy_points, na.rm = TRUE), `Games Played` = n())%>%
+  ungroup() %>%
+  transmute(`Player` = player_name_full,
+         `Games Played`,
+         `Avg Score`,
+         `Team` = fantasy_team) %>%
+  group_by(Player, Team) %>%
+  arrange(Team, desc(`Avg Score`)) %>%
+  group_by(Team) %>%
+  filter(`Games Played` > 5) %>%
+  filter(row_number() <= 5)
+
+```
+
+## Worst 5 Players By Team
+
+```{r}
+#| echo: false
+
+all_fielded_teams_full %>%
+  filter(fielded_position != "interchange" & !injury_substituted & TOG > 0 & !is.na(TOG)) %>%
+  group_by(player_name_full, fantasy_team) %>%
+  summarise(`Avg Score` = mean(fantasy_points, na.rm = TRUE), `Games Played` = n())%>%
+  ungroup() %>%
+  transmute(`Player` = player_name_full,
+         `Games Played`,
+         `Avg Score`,
+         `Team` = fantasy_team) %>%
+  group_by(Player, Team) %>%
+  arrange(Team, `Avg Score`) %>%
+  group_by(Team) %>%
+  filter(`Games Played` > 5) %>%
+  filter(row_number() <= 5)
+
+```
+
+## Positional Graphs
+```{r}
+#| echo: false
+#| 
 ```
 
