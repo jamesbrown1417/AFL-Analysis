@@ -1,9 +1,18 @@
-##%######################################################%##
-#                                                          #
-####            Web scrape results from HTML            ####
-####      files returned by selenium python script      ####
-#                                                          #
-##%######################################################%##
+---
+title: "Player Summary"
+subtitle: "2022 Season"
+format:
+  html:
+      df-print: kable
+      theme: cosmo
+      self-contained: true
+      toc: true
+editor: visual
+---
+
+```{r}
+#| label: load-packages-and-data
+#| include: false
 
 # Libraries, functions and data
 library(tidyverse)
@@ -12,6 +21,11 @@ combined_stats_table <- read_rds("Data/RDS-files/combined_stats_table_2022.rds")
 player_details <- read_rds("Data/RDS-files/player_details.rds")
 draft_recap <- read_csv("Data/CSV-files/draft_recap_2022.csv")
 `%notin%` <- Negate(`%in%`)
+```
+
+```{r}
+#| label: process-data
+#| include: false
 
 ##%######################################################%##
 #                                                          #
@@ -521,4 +535,191 @@ all_fielded_teams_full %>%
 all_fielded_teams_full <-
   all_fielded_teams_full %>%
   mutate(injury_substituted = ifelse(player_name == "P. Cripps" & round_number == "Round 4", FALSE, injury_substituted))
+
+##%######################################################%##
+#                                                          #
+####       Add player season average to the table       ####
+#                                                          #
+##%######################################################%##
+
+season_averages <-
+combined_stats_table %>%
+  filter(TOG > 50) %>%
+  group_by(player_name) %>%
+  summarise(average_score = round(mean(fantasy_points, na.rm = TRUE), digits = 2))
+
+all_fielded_teams_full <-
+  all_fielded_teams_full %>%
+  left_join(season_averages, by = c("player_name_full" = "player_name"))
+
+```
+
+## 10 Highest and Lowest Fielded Scores
+
+::: panel-tabset
+
+## Highest
+
+```{r}
+all_fielded_teams_full %>% 
+  select(player_name_full,
+         fantasy_points,
+         fantasy_team,
+         round_number,
+         fielded_position) %>%
+  arrange(desc(fantasy_points)) %>%
+  head(10)
+```
+
+
+## Lowest (Injuries and Non-playing players excluded)
+
+```{r}
+all_fielded_teams_full %>%
+  filter(!injury_substituted & fielded_position != "Interchange") %>%
+  filter(TOG > 50) %>%
+  select(player_name_full,
+         fantasy_points,
+         TOG,
+         fantasy_team,
+         round_number,
+         fielded_position) %>%
+  arrange(fantasy_points) %>%
+  head(10)
+```
+
+:::
+
+## Highest and Lowest Fielded Score by Team
+
+::: panel-tabset
+
+## Highest
+
+```{r}
+all_fielded_teams_full %>% 
+  select(fantasy_team,
+         fantasy_points,
+         player_name_full,
+         round_number,
+         fielded_position) %>%
+  arrange(desc(fantasy_points)) %>%
+  group_by(fantasy_team) %>%
+  filter(row_number() == min(row_number()))
+```
+
+## Lowest (Injuries and Non-playing players excluded)
+
+```{r}
+all_fielded_teams_full %>%
+  filter(!injury_substituted & fielded_position != "Interchange") %>%
+  filter(TOG > 60) %>%
+  select(fantasy_team,
+         fantasy_points,
+         TOG,
+         player_name_full,
+         round_number,
+         fielded_position) %>%
+  arrange(fantasy_points) %>%
+  group_by(fantasy_team) %>%
+  filter(row_number() == min(row_number()))
+```
+
+:::
+
+## Biggest Outlier Scores
+
+```{r}
+all_fielded_teams_full %>%
+  select(fantasy_team,
+         fantasy_points,
+         player_name_full,
+         round_number,
+         fielded_position,
+         average_score) %>%
+  mutate(diff = fantasy_points - average_score) %>%
+  arrange(desc(diff)) %>%
+  head(20)
+```
+
+## Smallest Outlier Scores (Injuries excluded)
+
+```{r}
+all_fielded_teams_full %>%
+  filter(fielded_position != "Interchange" & TOG > 50) %>%
+  select(fantasy_team,
+         fantasy_points,
+         player_name_full,
+         round_number,
+         fielded_position,
+         average_score) %>%
+  mutate(diff = fantasy_points - average_score) %>%
+  arrange(diff) %>%
+  head(20)
+```
+
+## Biggest Loopholed Scores
+
+```{r}
+all_fielded_teams_full %>% 
+  filter(str_detect(fielded_position, "Emergency")) %>%
+  select(player_name_full,
+         fantasy_points,
+         fantasy_team,
+         round_number,
+         fielded_position) %>%
+  arrange(desc(fantasy_points)) %>%
+  head(20)
+```
+
+## Smallest Loopholed Scores
+
+```{r}
+all_fielded_teams_full %>% 
+  filter(str_detect(fielded_position, "Emergency")) %>%
+  select(player_name_full,
+         fantasy_points,
+         fantasy_team,
+         round_number,
+         fielded_position) %>%
+  arrange(fantasy_points) %>%
+  head(20)
+```
+
+## Loophole usage and performance
+
+```{r}
+# loophole performance
+  all_fielded_teams_full %>% 
+  filter(str_detect(fielded_position, "Emergency") | injury_substituted) %>%
+  group_by(fantasy_team, round_number) %>%
+  mutate(defender_sub_activated = sum(injury_substituted & fielded_position == "Defender"),
+         midfielder_sub_activated = sum(injury_substituted & fielded_position == "Midfielder"),
+         ruck_sub_activated = sum(injury_substituted & fielded_position == "Ruck"),
+         forward_sub_activated = sum(injury_substituted & fielded_position == "Forward")
+         ) %>%
+  ungroup() %>%
+  filter(str_detect(fielded_position, "Emergency")) %>%
+  filter(!(fielded_position == "Emergency Defender" & defender_sub_activated > 0)) %>%
+  filter(!(fielded_position == "Emergency Midfielder" & midfielder_sub_activated > 0)) %>%
+  filter(!(fielded_position == "Emergency Ruck" & ruck_sub_activated > 0)) %>%
+  filter(!(fielded_position == "Emergency Forward" & forward_sub_activated > 0)) %>%
+  group_by(fantasy_team) %>%
+  summarise(avg_loopholed_score = round(mean(fantasy_points, na.rm = TRUE), 2), number_of_loopholes_used = n()) %>%
+  arrange(desc(number_of_loopholes_used))
+
+```
+
+## Full team not fielded
+
+```{r}
+    all_fielded_teams_full %>% 
+  filter(fielded_position != "Interchange" & !injury_substituted & TOG != 0 & !is.na(TOG)) %>%
+  group_by(fantasy_team, round_number) %>%
+  mutate(players_fielded = n()) %>%
+  ungroup() %>%
+  distinct(fantasy_team, round_number, .keep_all = TRUE) %>%
+  group_by(fantasy_team) %>%
+  summarise(num_of_non_full_teams = sum(players_fielded < 18, na.rm = TRUE))
+```
 
