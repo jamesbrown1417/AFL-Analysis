@@ -781,32 +781,6 @@ all_fielded_teams_full %>%
 
 ```
 
-## Players Who Featured for the Most Teams
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-all_fielded_teams_full %>%
-  arrange(player_name_full, round_number) %>%
-  group_by(player_name_full, fantasy_team) %>%
-  summarise(`Games Played` = n()) %>%
-  group_by(player_name_full) %>%
-  filter(n() > 1) %>%
-  mutate( rn = row_number()) %>%
-  ungroup() %>%
-  transmute(`Player` = player_name_full,
-         `Games Played`,
-         `Team` = fantasy_team,
-         overall_max_rn = max(rn)) %>%
-  group_by(Player) %>%
-  filter(max(row_number()) == overall_max_rn) %>%
-  mutate(rn = row_number()) %>%
-  pivot_wider(id_cols = Player, names_from = rn, values_from = Team, names_prefix = "Team")
-
-```
-
 ## Best 5 Players By Team
 
 ###### Min 5 games played, only games where player contributed to overall score and were not injured are counted

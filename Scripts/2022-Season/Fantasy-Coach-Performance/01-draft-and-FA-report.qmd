@@ -196,7 +196,9 @@ worst_draft_picks <-
   all_player_rankings_worst %>%
   left_join(draft_recap) %>%
   mutate(difference = pick - ranking) %>%
-  arrange(difference)
+  arrange(difference) %>%
+  mutate(avg_score = round(avg_score, 2),
+         z_score = round(z_score, 2))
 
 ```
 
@@ -293,6 +295,7 @@ best_pick_by_round %>%
 #| echo: false
 
 best_FA_pickups %>%
+  filter(player_name != "Oscar McInerney") %>%
   select(
     Player = player_name,
     Avg = avg_score,
@@ -342,7 +345,7 @@ worst_pick_by_round %>%
 
 ## Biggest Changes in Average Compared to 2021 Season
 
-##### Min 5 games played in both seasons
+##### Min 5 games played in both seasons, injury affected scores (<50 % TOG) excluded
 
 ```{r}
 #| include: false
