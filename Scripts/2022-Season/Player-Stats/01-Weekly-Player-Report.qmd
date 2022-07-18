@@ -1,0 +1,691 @@
+---
+title: "Weekly Player Stats Report"
+subtitle: "2022 Season"
+format:
+  html:
+      df-print: paged
+      theme: cosmo
+      self-contained: true
+      toc: true
+      fig-width: 8
+      fig-height: 6
+editor: visual
+author: James Brown
+---
+
+```{r}
+#| label: load-packages-and-data
+#| include: false
+#| message: false
+
+# Libraries and Data
+library(tidyverse)
+library(ggthemes)
+library(paletteer)
+combined_stats_table <- read_rds("../../../Data/RDS-files/combined_stats_table_2022.rds")
+```
+
+# Basic Category Leaders - Last Round
+
+::: panel-tabset
+## Kicks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(kicks > 0) %>%
+  arrange(desc(kicks)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Kicks = kicks,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Handballs
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(handballs > 0) %>%
+  arrange(desc(handballs)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Handballs = handballs,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Disposals
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(disposals > 0) %>%
+  arrange(desc(disposals)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Disposals = disposals,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Marks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(marks > 0) %>%
+  arrange(desc(marks)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Marks = marks,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Tackles
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(tackles > 0) %>%
+  arrange(desc(tackles)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Tackles = tackles,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Goals
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(goals > 0) %>%
+  arrange(desc(goals)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Goals = goals,
+         Behinds = behinds,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Behinds
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(behinds > 0) %>%
+  arrange(desc(behinds)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Goals = goals,
+         Behinds = behinds,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Hitouts
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(hitouts > 0) %>%
+  arrange(desc(hitouts)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Hitouts = hitouts,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Frees For
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(freesFor > 0) %>%
+  arrange(desc(freesFor)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         FF = freesFor,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Frees Against
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(freesAgainst > 0) %>%
+  arrange(desc(freesAgainst)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         FA = freesAgainst,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+:::
+
+# Advanced Category Leaders - Last Round
+
+::: panel-tabset
+## CBA %
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(CBA_percentage > 0) %>%
+  arrange(desc(CBA_percentage)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `CBA %` = CBA_percentage,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## TOG %
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(TOG > 0) %>%
+  arrange(desc(TOG)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `TOG %` = TOG,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Kick-in %
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(kick_in_percentage > 0) %>%
+  arrange(desc(kick_in_percentage)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Kick-in %` = kick_in_percentage,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Contested Marks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(contestedMarks > 0) %>%
+  arrange(desc(contestedMarks)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Contested Marks` = contestedMarks,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Unontested Marks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(uncontestedMarks > 0) %>%
+  arrange(desc(uncontestedMarks)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Uncontested Marks` = uncontestedMarks,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Contested Possessions
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(contestedPossessions > 0) %>%
+  arrange(desc(contestedPossessions)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Contested Possessions` = contestedPossessions,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Uncontested Possessions
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(uncontestedPossessions > 0) %>%
+  arrange(desc(uncontestedPossessions)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Uncontested Possessions` = uncontestedPossessions,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Clangers
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(clangers > 0) %>%
+  arrange(desc(clangers)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Clangers = clangers,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Turnovers
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(turnovers > 0) %>%
+  arrange(desc(turnovers)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         Turnovers = turnovers,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Inside 50s
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(inside50s > 0) %>%
+  arrange(desc(inside50s)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Inside 50s` = inside50s,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Rebound 50s
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(rebound50s > 0) %>%
+  arrange(desc(rebound50s)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Rebound 50s` = rebound50s,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Disposal Efficiency
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(disposals > 15) %>%
+  filter(disposalEfficiency > 0) %>%
+  arrange(desc(disposalEfficiency)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Disposal Efficiency` = disposalEfficiency,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Kick Efficiency
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(kicks > 10) %>%
+  filter(kick_efficiency > 0) %>%
+  arrange(desc(kick_efficiency)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         `Kicks Efficiency` = kick_efficiency,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+:::
+
+# Ruck Analysis
+
+```{r}
+#| echo: false
+
+ruck_data <-
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(ruck_contests_attended > 0) %>%
+  arrange(team) %>%
+  group_by(team) %>%
+  mutate(ruck_contest_percentage = round(ruck_contests_attended / sum(ruck_contests_attended) * 100, 2)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         hitouts,
+         hitoutWinPercentage,
+         CBA_percentage,
+         ruck_contest_percentage,
+         Team = team,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+```{r}
+#| echo: false
+
+ruck_summary_fun <- function(team) {
+ruck_data %>%
+  ungroup() %>%
+  filter(Team == team) %>%
+  arrange(desc(ruck_contest_percentage)) %>%
+  select(Player,
+         Rd,
+         `CBA %` = CBA_percentage,
+         `Ruck Contest %` = ruck_contest_percentage,
+         `Hitouts` = hitouts,
+         `Hitout Win %` = hitoutWinPercentage)
+}
+```
+
+## Ruck Combination By Team
+
+::: panel-tabset
+## Adelaide Crows
+
+```{r}
+#| echo: false
+ruck_summary_fun("Adelaide Crows")
+```
+
+## Brisbane Lions
+
+```{r}
+#| echo: false
+ruck_summary_fun("Brisbane Lions")
+```
+
+## Carlton
+
+```{r}
+#| echo: false
+ruck_summary_fun("Carlton")
+```
+
+## Collingwood
+
+```{r}
+#| echo: false
+ruck_summary_fun("Collingwood")
+```
+
+## Essendon
+
+```{r}
+#| echo: false
+ruck_summary_fun("Essendon")
+```
+
+## Fremantle
+
+```{r}
+#| echo: false
+ruck_summary_fun("Fremantle")
+```
+
+## Geelong Cats
+
+```{r}
+#| echo: false
+ruck_summary_fun("Geelong Cats")
+```
+
+## Gold Coast Suns
+
+```{r}
+#| echo: false
+ruck_summary_fun("Gold Coast Suns")
+```
+
+## GWS Giants
+
+```{r}
+#| echo: false
+ruck_summary_fun("GWS Giants")
+```
+
+## Hawthorn
+
+```{r}
+#| echo: false
+ruck_summary_fun("Hawthorn")
+```
+
+## Melbourne
+
+```{r}
+#| echo: false
+ruck_summary_fun("Melbourne")
+```
+
+## North Melbourne
+
+```{r}
+#| echo: false
+ruck_summary_fun("North Melbourne")
+```
+
+## Port Adelaide
+
+```{r}
+#| echo: false
+ruck_summary_fun("Port Adelaide")
+```
+
+## Richmond
+
+```{r}
+#| echo: false
+ruck_summary_fun("Richmond")
+```
+
+## St Kilda
+
+```{r}
+#| echo: false
+ruck_summary_fun("St Kilda")
+```
+
+## Sydney Swans
+
+```{r}
+#| echo: false
+ruck_summary_fun("Sydney Swans")
+```
+
+## West Coast Eagles
+
+```{r}
+#| echo: false
+ruck_summary_fun("West Coast Eagles")
+```
+
+## Western Bulldogs
+
+```{r}
+#| echo: false
+ruck_summary_fun("Western Bulldogs")
+```
+:::
+
+## Most Ruck Contests Attended
+
+```{r}
+#| echo: false
+
+ruck_data %>%
+  arrange(desc(ruck_contest_percentage)) %>%
+  select(Player,
+         Team,
+         Rd,
+         `CBA %` = CBA_percentage,
+         `Ruck Contest %` = ruck_contest_percentage,
+         `Hitouts` = hitouts,
+         `Hitout Win %` = hitoutWinPercentage)
+
+```
+
+## Best Win %
+
+```{r}
+#| echo: false
+
+ruck_data %>%
+  arrange(desc(hitoutWinPercentage)) %>%
+  filter(ruck_contest_percentage >= 20) %>%
+  select(Player,
+         Team,
+         Rd,
+         `CBA %` = CBA_percentage,
+         `Ruck Contest %` = ruck_contest_percentage,
+         `Hitouts` = hitouts,
+         `Hitout Win %` = hitoutWinPercentage)
+```

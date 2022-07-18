@@ -143,6 +143,123 @@ running_hot_last_3 %>%
 ```
 :::
 
+## Biggest Scores Last Round
+::: panel-tabset
+
+## Defenders
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(fantasy_defender_status) %>%
+  filter(fantasy_points > 0) %>%
+  arrange(desc(fantasy_points)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         AF = fantasy_points,
+         K = kicks,
+         H = handballs,
+         T = tackles,
+         M = marks,
+         G = goals,
+         B = behinds,
+         HO = hitouts,
+         FF = freesFor,
+         FA = freesAgainst,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Midfielders
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(fantasy_midfield_status) %>%
+  filter(fantasy_points > 0) %>%
+  arrange(desc(fantasy_points)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         AF = fantasy_points,
+         K = kicks,
+         H = handballs,
+         T = tackles,
+         M = marks,
+         G = goals,
+         B = behinds,
+         HO = hitouts,
+         FF = freesFor,
+         FA = freesAgainst,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Rucks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(fantasy_ruck_status) %>%
+  filter(fantasy_points > 0) %>%
+  arrange(desc(fantasy_points)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         AF = fantasy_points,
+         K = kicks,
+         H = handballs,
+         T = tackles,
+         M = marks,
+         G = goals,
+         B = behinds,
+         HO = hitouts,
+         FF = freesFor,
+         FA = freesAgainst,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+## Forwards
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  ungroup() %>%
+  filter(round_number == max(round_number)) %>%
+  filter(fantasy_forward_status) %>%
+  filter(fantasy_points > 0) %>%
+  arrange(desc(fantasy_points)) %>%
+  select(Player = player_name,
+         Season,
+         Rd = round_number,
+         AF = fantasy_points,
+         K = kicks,
+         H = handballs,
+         T = tackles,
+         M = marks,
+         G = goals,
+         B = behinds,
+         HO = hitouts,
+         FF = freesFor,
+         FA = freesAgainst,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+:::
+
 ## Form Changes
 
 ### Gained Form

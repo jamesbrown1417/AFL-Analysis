@@ -51,7 +51,7 @@ weekly_reports_update <- function(season = "2022") {
   quarto::quarto_render(
     "03-heatmaps.qmd",
     output_format = "html",
-    output_file = paste("Heatmaps-", date_today, ".html", sep = "")
+    output_file = paste("Heatmaps", ".html", sep = "")
   )
   
   # Render Fantasy Form Report

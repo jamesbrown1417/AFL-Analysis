@@ -48,11 +48,10 @@ ggplot(heatmap_df_cbas, aes(round_number, reorder(player_name, mean_CBA_percenta
   labs(fill = "CBA %") +
   scale_fill_paletteer_c(`"viridis::plasma"`) +
   theme_tufte(ticks = FALSE) +
-  geom_vline(xintercept = seq(0.5,16.5, by = 1), colour = "grey50") +
+  geom_vline(xintercept = seq(0.5,length(unique(combined_stats_table$round_number)) - 0.5, by = 1), colour = "grey50") +
   geom_hline(yintercept = seq(0.5, length(unique(heatmap_df_cbas$player_name)) + 0.5, by = 1), colour = "grey50") +
   theme(panel.background = element_rect(fill = "darkblue",colour = "white")) +
-  geom_vline(xintercept = seq(16.51, 16.6, by = 0.01), colour = "white") +
-  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
+geom_vline(xintercept = seq(length(unique(combined_stats_table$round_number)) - 0.495, length(unique(combined_stats_table$round_number)) - 0.4, by = 0.01), colour = "white") +  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(length(unique(heatmap_df_cbas$player_name)) + 0.52, length(unique(heatmap_df_cbas$player_name)) + 1.5, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(0.4, 0.45, by = 0.01), colour = "white") +
   geom_text(mapping = aes(label = round(CBA_percentage, 1)), size = 3,
@@ -87,11 +86,10 @@ ggplot(heatmap_df_kickins, aes(round_number, reorder(player_name, mean_kick_in_p
   labs(fill = "Kick-in %") +
   scale_fill_paletteer_c(`"viridis::plasma"`) +
   theme_tufte(ticks = FALSE) +
-  geom_vline(xintercept = seq(0.5,16.5, by = 1), colour = "grey50") +
+  geom_vline(xintercept = seq(0.5,length(unique(combined_stats_table$round_number)) - 0.5, by = 1), colour = "grey50") +
   geom_hline(yintercept = seq(0.5, length(unique(heatmap_df_kickins$player_name)) + 0.5, by = 1), colour = "grey50") +
   theme(panel.background = element_rect(fill = "darkblue",colour = "white")) +
-  geom_vline(xintercept = seq(16.51, 16.6, by = 0.01), colour = "white") +
-  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
+geom_vline(xintercept = seq(length(unique(combined_stats_table$round_number)) - 0.495, length(unique(combined_stats_table$round_number)) - 0.4, by = 0.01), colour = "white") +  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(length(unique(heatmap_df_kickins$player_name)) + 0.52, length(unique(heatmap_df_kickins$player_name)) + 1.5, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(0.4, 0.45, by = 0.01), colour = "white") +
   geom_text(mapping = aes(label = round(kick_in_percentage, 1)), size = 3,
@@ -132,11 +130,10 @@ ggplot(heatmap_df_uncontested_marks, aes(round_number, reorder(player_name, mean
   labs(fill = "Uncontested Mark %") +
   scale_fill_paletteer_c(`"viridis::plasma"`) +
   theme_tufte(ticks = FALSE) +
-  geom_vline(xintercept = seq(0.5,16.5, by = 1), colour = "grey50") +
+  geom_vline(xintercept = seq(0.5,length(unique(combined_stats_table$round_number)) - 0.5, by = 1), colour = "grey50") +
   geom_hline(yintercept = seq(0.5, length(unique(heatmap_df_uncontested_marks$player_name)) + 0.5, by = 1), colour = "grey50") +
   theme(panel.background = element_rect(fill = "darkblue",colour = "white")) +
-  geom_vline(xintercept = seq(16.51, 16.6, by = 0.01), colour = "white") +
-  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
+geom_vline(xintercept = seq(length(unique(combined_stats_table$round_number)) - 0.495, length(unique(combined_stats_table$round_number)) - 0.4, by = 0.01), colour = "white") +  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(length(unique(heatmap_df_uncontested_marks$player_name)) + 0.52, length(unique(heatmap_df_uncontested_marks$player_name)) + 1.5, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(0.4, 0.45, by = 0.01), colour = "white") +
   geom_text(mapping = aes(label = round(uncontested_marks_percentage, 1)), size = 3,
@@ -175,11 +172,10 @@ ggplot(heatmap_df_rebound_50s, aes(round_number, reorder(player_name, mean_rebou
   labs(fill = "Rebound 50 %") +
   scale_fill_paletteer_c(`"viridis::plasma"`) +
   theme_tufte(ticks = FALSE) +
-  geom_vline(xintercept = seq(0.5,16.5, by = 1), colour = "grey50") +
+  geom_vline(xintercept = seq(0.5,length(unique(combined_stats_table$round_number)) - 0.5, by = 1), colour = "grey50") +
   geom_hline(yintercept = seq(0.5, length(unique(heatmap_df_rebound_50s$player_name)) + 0.5, by = 1), colour = "grey50") +
   theme(panel.background = element_rect(fill = "darkblue",colour = "white")) +
-  geom_vline(xintercept = seq(16.51, 16.6, by = 0.01), colour = "white") +
-  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
+geom_vline(xintercept = seq(length(unique(combined_stats_table$round_number)) - 0.495, length(unique(combined_stats_table$round_number)) - 0.4, by = 0.01), colour = "white") +  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(length(unique(heatmap_df_rebound_50s$player_name)) + 0.52, length(unique(heatmap_df_rebound_50s$player_name)) + 1.5, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(0.4, 0.45, by = 0.01), colour = "white") +
   geom_text(mapping = aes(label = round(rebound_50s_percentage, 1)), size = 3,
@@ -214,10 +210,10 @@ ggplot(heatmap_df_fantasy_points, aes(round_number, reorder(player_name, mean_fa
   labs(fill = "Fantasy Points") +
   scale_fill_paletteer_c(`"viridis::plasma"`) +
   theme_tufte(ticks = FALSE) +
-  geom_vline(xintercept = seq(0.5,16.5, by = 1), colour = "grey50") +
+  geom_vline(xintercept = seq(0.5,length(unique(combined_stats_table$round_number)) - 0.5, by = 1), colour = "grey50") +
   geom_hline(yintercept = seq(0.5, length(unique(heatmap_df_fantasy_points$player_name)) + 0.5, by = 1), colour = "grey50") +
   theme(panel.background = element_rect(fill = "darkblue",colour = "white")) +
-  geom_vline(xintercept = seq(16.51, 16.6, by = 0.01), colour = "white") +
+  geom_vline(xintercept = seq(length(unique(combined_stats_table$round_number)) - 0.495, length(unique(combined_stats_table$round_number)) - 0.4, by = 0.01), colour = "white") +
   geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(length(unique(heatmap_df_fantasy_points$player_name)) + 0.52, length(unique(heatmap_df_fantasy_points$player_name)) + 1.5, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(0.4, 0.45, by = 0.01), colour = "white") +
@@ -253,11 +249,10 @@ ggplot(heatmap_df_goals, aes(round_number, reorder(player_name, mean_goals), fil
   labs(fill = "Goals") +
   scale_fill_paletteer_c(`"viridis::plasma"`) +
   theme_tufte(ticks = FALSE) +
-  geom_vline(xintercept = seq(0.5,16.5, by = 1), colour = "grey50") +
+  geom_vline(xintercept = seq(0.5,length(unique(combined_stats_table$round_number)) - 0.5, by = 1), colour = "grey50") +
   geom_hline(yintercept = seq(0.5, length(unique(heatmap_df_goals$player_name)) + 0.5, by = 1), colour = "grey50") +
   theme(panel.background = element_rect(fill = "darkblue",colour = "white")) +
-  geom_vline(xintercept = seq(16.51, 16.6, by = 0.01), colour = "white") +
-  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
+geom_vline(xintercept = seq(length(unique(combined_stats_table$round_number)) - 0.495, length(unique(combined_stats_table$round_number)) - 0.4, by = 0.01), colour = "white") +  geom_vline(xintercept = seq(0.40, 0.48, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(length(unique(heatmap_df_goals$player_name)) + 0.52, length(unique(heatmap_df_goals$player_name)) + 1.5, by = 0.01), colour = "white") +
   geom_hline(yintercept = seq(0.4, 0.48, by = 0.01), colour = "white") +
   geom_text(mapping = aes(label = round(goals, 1)), size = 3,
