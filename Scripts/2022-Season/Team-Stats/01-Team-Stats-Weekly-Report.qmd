@@ -1,0 +1,524 @@
+---
+title: "Weekly Team Stats Report"
+subtitle: "2022 Season"
+format:
+  html:
+      df-print: paged
+      theme: cosmo
+      self-contained: true
+      toc: true
+      fig-width: 8
+      fig-height: 6
+editor: visual
+author: James Brown
+---
+
+```{r}
+#| label: load-packages-and-data
+#| include: false
+#| message: false
+
+# Libraries and Data
+library(tidyverse)
+library(ggthemes)
+library(paletteer)
+combined_stats_table <- read_rds("../../../Data/RDS-files/combined_stats_table_2022.rds")
+```
+
+# Basic Category Leaders - Last Round
+
+::: panel-tabset
+
+## Fantasy Points
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(fantasy_points > 0) %>%
+  mutate(total_fantasy_points = sum(fantasy_points, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_fantasy_points)) %>%
+  select(Team = team,
+        `Total Fantasy Points` = total_fantasy_points,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Kicks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(kicks > 0) %>%
+  mutate(total_kicks = sum(kicks, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_kicks)) %>%
+  select(Team = team,
+        `Total Kicks` = total_kicks,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Handballs
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(handballs > 0) %>%
+  mutate(total_handballs = sum(handballs, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_handballs)) %>%
+  select(Team = team,
+        `Total Handballs` = total_handballs,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+
+## Disposals
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(disposals > 0) %>%
+  mutate(total_disposals = sum(disposals, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_disposals)) %>%
+  select(Team = team,
+        `Total Disposals` = total_disposals,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Marks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(marks > 0) %>%
+  mutate(total_marks = sum(marks, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_marks)) %>%
+  select(Team = team,
+        `Total Marks` = total_marks,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Tackles
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(tackles > 0) %>%
+  mutate(total_tackles = sum(tackles, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_tackles)) %>%
+  select(Team = team,
+        `Total tackles` = total_tackles,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Goals
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(goals > 0) %>%
+  mutate(total_goals = sum(goals, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_goals)) %>%
+  select(Team = team,
+        `Total Goals` = total_goals,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Behinds
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(behinds > 0) %>%
+  mutate(total_behinds = sum(behinds, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_behinds)) %>%
+  select(Team = team,
+        `Total Behinds` = total_behinds,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Hitouts
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(hitouts > 0) %>%
+  mutate(total_hitouts = sum(hitouts, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_hitouts)) %>%
+  select(Team = team,
+        `Total Hitouts` = total_hitouts,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Frees For
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(freesFor > 0) %>%
+  mutate(total_freesFor = sum(freesFor, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_freesFor)) %>%
+  select(Team = team,
+        `Total Frees For` = total_freesFor,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Frees Against
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(freesAgainst > 0) %>%
+  mutate(total_freesAgainst = sum(freesAgainst, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_freesAgainst)) %>%
+  select(Team = team,
+        `Total Frees Against` = total_freesAgainst,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+:::
+
+# Advanced Category Leaders - Last Round
+
+::: panel-tabset
+
+## Contested Marks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(contestedMarks > 0) %>%
+  mutate(total_contestedMarks = sum(contestedMarks, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_contestedMarks)) %>%
+  select(Team = team,
+        `Total Contested Marks` = total_contestedMarks,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Uncontested Marks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(uncontestedMarks > 0) %>%
+  mutate(total_uncontestedMarks = sum(uncontestedMarks, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_uncontestedMarks)) %>%
+  select(Team = team,
+        `Total Uncontested Marks` = total_uncontestedMarks,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+
+## Contested Possessions
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(contestedPossessions > 0) %>%
+  mutate(total_contestedPossessions = sum(contestedPossessions, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_contestedPossessions)) %>%
+  select(Team = team,
+        `Total Contested Possessions` = total_contestedPossessions,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Uncontested Possessions
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(uncontestedPossessions > 0) %>%
+  mutate(total_uncontestedPossessions = sum(uncontestedPossessions, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_uncontestedPossessions)) %>%
+  select(Team = team,
+        `Total uncontestedPossessions` = total_uncontestedPossessions,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Clangers
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(clangers > 0) %>%
+  mutate(total_clangers = sum(clangers, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_clangers)) %>%
+  select(Team = team,
+        `Total Clangers` = total_clangers,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Turnovers
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(turnovers > 0) %>%
+  mutate(total_turnovers = sum(turnovers, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_turnovers)) %>%
+  select(Team = team,
+        `Total Turnovers` = total_turnovers,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Inside 50s
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(inside50s > 0) %>%
+  mutate(total_inside50s = sum(inside50s, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_inside50s)) %>%
+  select(Team = team,
+        `Total Inside 50s` = total_inside50s,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Rebound 50s
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(rebound50s > 0) %>%
+  mutate(total_rebound50s = sum(rebound50s, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_rebound50s)) %>%
+  select(Team = team,
+        `Total Rebound 50s` = total_rebound50s,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Disposal Efficiency
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(disposalEfficiency > 0) %>%
+  mutate(total_disposalEfficiency = round(mean(disposalEfficiency, na.rm = TRUE), 2)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_disposalEfficiency)) %>%
+  select(Team = team,
+        `Total disposalEfficiency` = total_disposalEfficiency,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+```
+
+## Kick Efficiency
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(kick_efficiency > 0) %>%
+  mutate(total_kick_efficiency = round(mean(kick_efficiency, na.rm = TRUE), 2)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_kick_efficiency)) %>%
+  select(Team = team,
+        `Total Kick Efficiency` = total_kick_efficiency,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+
+
+```
+
+## Ruck Contests
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  group_by(team) %>%
+  filter(round_number == max(round_number)) %>%
+  filter(ruck_contests_attended > 0) %>%
+  mutate(total_ruck_contests_attended = sum(ruck_contests_attended, na.rm = TRUE)) %>%
+  filter(row_number() == 1) %>%
+  arrange(desc(total_ruck_contests_attended)) %>%
+  select(Team = team,
+        `Total Ruck Contests` = total_ruck_contests_attended,
+         Season,
+         Rd = round_number,
+         Opposition = opposition_team,
+         Venue = venue)
+```
+
+:::

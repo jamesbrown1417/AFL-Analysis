@@ -1,0 +1,513 @@
+---
+title: "Season Player Stats Report"
+subtitle: "2022 Season"
+format:
+  html:
+      df-print: kable
+      theme: cosmo
+      self-contained: true
+      toc: true
+      fig-width: 8
+      fig-height: 6
+editor: visual
+author: James Brown
+---
+
+```{r}
+#| label: load-packages-and-data
+#| include: false
+#| message: false
+
+# Libraries and Data
+library(tidyverse)
+combined_stats_table <- read_rds("../../../Data/RDS-files/combined_stats_table_2021.rds")
+```
+
+# Basic Category Leaders - Season
+
+::: panel-tabset
+## Kicks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_kicks = round(mean(kicks, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_kicks > 0 & games_played > 5) %>%
+  arrange(desc(mean_kicks)) %>%
+  select(Player = player_name,
+         `Avg Kicks` = mean_kicks,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Handballs
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_handballs = round(mean(handballs, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_handballs > 0 & games_played > 5) %>%
+  arrange(desc(mean_handballs)) %>%
+  select(Player = player_name,
+         `Avg Handballs` = mean_handballs,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Disposals
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_disposals = round(mean(disposals, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_disposals > 0 & games_played > 5) %>%
+  arrange(desc(mean_disposals)) %>%
+  select(Player = player_name,
+         `Avg Disposals` = mean_disposals,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Marks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_marks = round(mean(marks, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_marks > 0 & games_played > 5) %>%
+  arrange(desc(mean_marks)) %>%
+  select(Player = player_name,
+         `Avg Marks` = mean_marks,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Tackles
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_tackles = round(mean(tackles, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_tackles > 0 & games_played > 5) %>%
+  arrange(desc(mean_tackles)) %>%
+  select(Player = player_name,
+         `Avg Tackles` = mean_tackles,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Goals
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_goals = round(mean(goals, na.rm = TRUE), 2),
+            total_goals = round(sum(goals, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_goals > 0 & games_played > 5) %>%
+  arrange(desc(total_goals)) %>%
+  select(Player = player_name,
+         `Total Goals` = total_goals,
+         `Avg Goals` = mean_goals,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Behinds
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_behinds = round(mean(behinds, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_behinds > 0 & games_played > 5) %>%
+  arrange(desc(mean_behinds)) %>%
+  select(Player = player_name,
+         `Avg behinds` = mean_behinds,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Hitouts
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_hitouts = round(mean(hitouts, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_hitouts > 0 & games_played > 5) %>%
+  arrange(desc(mean_hitouts)) %>%
+  select(Player = player_name,
+         `Avg Hitouts` = mean_hitouts,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Frees For
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_freesFor = round(mean(freesFor, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_freesFor > 0 & games_played > 5) %>%
+  arrange(desc(mean_freesFor)) %>%
+  select(Player = player_name,
+         `Avg Frees For` = mean_freesFor,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Frees Against
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_freesAgainst = round(mean(freesAgainst, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_freesAgainst > 0 & games_played > 5) %>%
+  arrange(desc(mean_freesAgainst)) %>%
+  select(Player = player_name,
+         `Avg Frees Against` = mean_freesAgainst,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+:::
+
+# Advanced Category Leaders - Season
+
+::: panel-tabset
+## CBA %
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_CBA_percentage = round(mean(CBA_percentage, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_CBA_percentage > 0 & games_played > 5) %>%
+  arrange(desc(mean_CBA_percentage)) %>%
+  select(Player = player_name,
+         `Avg CBA %` = mean_CBA_percentage,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## TOG %
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_TOG = round(mean(TOG, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_TOG > 0 & games_played > 5) %>%
+  arrange(desc(mean_TOG)) %>%
+  select(Player = player_name,
+         `Avg TOG %` = mean_TOG,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Kick-in %
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_kick_in_percentage = round(mean(kick_in_percentage, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_kick_in_percentage > 0 & games_played > 5) %>%
+  arrange(desc(mean_kick_in_percentage)) %>%
+  select(Player = player_name,
+         `Avg Kick-in %` = mean_kick_in_percentage,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Contested Marks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_contestedMarks = round(mean(contestedMarks, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_contestedMarks > 0 & games_played > 5) %>%
+  arrange(desc(mean_contestedMarks)) %>%
+  select(Player = player_name,
+         `Avg Contested Marks` = mean_contestedMarks,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Uncontested Marks
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_uncontestedMarks = round(mean(uncontestedMarks, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_uncontestedMarks > 0 & games_played > 5) %>%
+  arrange(desc(mean_uncontestedMarks)) %>%
+  select(Player = player_name,
+         `Avg Uncontested Marks` = mean_uncontestedMarks,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Contested Possessions
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_contestedPossessions = round(mean(contestedPossessions, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_contestedPossessions > 0 & games_played > 5) %>%
+  arrange(desc(mean_contestedPossessions)) %>%
+  select(Player = player_name,
+         `Avg Contested Possessions` = mean_contestedPossessions,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Uncontested Possessions
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_uncontestedPossessions = round(mean(uncontestedPossessions, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_uncontestedPossessions > 0 & games_played > 5) %>%
+  arrange(desc(mean_uncontestedPossessions)) %>%
+  select(Player = player_name,
+         `Avg Uncontested Possessions` = mean_uncontestedPossessions,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Clangers
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_clangers = round(mean(clangers, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_clangers > 0 & games_played > 5) %>%
+  arrange(desc(mean_clangers)) %>%
+  select(Player = player_name,
+         `Avg Clangers` = mean_clangers,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Turnovers
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_turnovers = round(mean(turnovers, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_turnovers > 0 & games_played > 5) %>%
+  arrange(desc(mean_turnovers)) %>%
+  select(Player = player_name,
+         `Avg Turnovers` = mean_turnovers,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Inside 50s
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_inside50s = round(mean(inside50s, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_inside50s > 0 & games_played > 5) %>%
+  arrange(desc(mean_inside50s)) %>%
+  select(Player = player_name,
+         `Avg Inside 50s` = mean_inside50s,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Rebound 50s
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  summarise(mean_rebound50s = round(mean(rebound50s, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_rebound50s > 0 & games_played > 5) %>%
+  arrange(desc(mean_rebound50s)) %>%
+  select(Player = player_name,
+         `Avg Rebound 50s` = mean_rebound50s,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+
+```
+
+## Disposal Efficiency
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+  filter(mean(disposals, na.rm = TRUE) > 15) %>%
+  summarise(
+    mean_disposalEfficiency = round(mean(disposalEfficiency, na.rm = TRUE), 2),
+    team = max(team),
+    games_played = max(games_played)
+  ) %>%
+  filter(mean_disposalEfficiency > 0 & games_played > 5) %>%
+  arrange(desc(mean_disposalEfficiency)) %>%
+  select(
+    Player = player_name,
+    `Avg Disposal Efficiency` = mean_disposalEfficiency,
+    Team = team,
+    `Games Played` = games_played
+  ) %>%
+  head(20)
+```
+
+## Kick Efficiency
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+    filter(mean(kicks, na.rm = TRUE) >= 10) %>%
+  summarise(mean_kick_efficiency = round(mean(kick_efficiency, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_kick_efficiency > 0 & games_played > 5) %>%
+  arrange(desc(mean_kick_efficiency)) %>%
+  select(Player = player_name,
+         `Avg Kick Efficiency` = mean_kick_efficiency,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+```
+
+## Ruck Contests
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+    filter(mean(ruck_contests_attended, na.rm = TRUE) > 0) %>%
+  summarise(mean_ruck_contests_attended = round(mean(ruck_contests_attended, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_ruck_contests_attended > 0 & games_played > 5) %>%
+  arrange(desc(mean_ruck_contests_attended)) %>%
+  select(Player = player_name,
+         `Avg Ruck Contests` = mean_ruck_contests_attended,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+```
+
+## Hitout Win %
+
+```{r}
+#| echo: false
+
+combined_stats_table %>%
+    filter(mean(ruck_contests_attended, na.rm = TRUE) >= 5) %>%
+  summarise(mean_hitoutWinPercentage = round(mean(hitoutWinPercentage, na.rm = TRUE), 2),
+            team = max(team),
+            games_played = max(games_played)) %>%
+  filter(mean_hitoutWinPercentage > 0 & games_played > 5) %>%
+  arrange(desc(mean_hitoutWinPercentage)) %>%
+  select(Player = player_name,
+         `Avg Hitout Win %` = mean_hitoutWinPercentage,
+         Team = team,
+         `Games Played` = games_played) %>%
+  head(20)
+```
+:::

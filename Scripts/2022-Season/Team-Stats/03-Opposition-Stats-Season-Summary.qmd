@@ -1,0 +1,412 @@
+---
+title: "Season Opposition Team Stats Report"
+subtitle: "2022 Season"
+format:
+  html:
+      df-print: paged
+      theme: cosmo
+      self-contained: true
+      toc: true
+      fig-width: 8
+      fig-height: 6
+editor: visual
+author: James Brown
+---
+
+```{r}
+#| label: load-packages-and-data
+#| include: false
+#| message: false
+
+# Libraries and Data
+library(tidyverse)
+library(ggthemes)
+library(paletteer)
+combined_stats_table <- read_rds("../../../Data/RDS-files/combined_stats_table_2022.rds")
+```
+
+# Basic Category Leaders - Season
+
+::: panel-tabset
+
+## Fantasy Points
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(fantasy_points > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_fantasy_points = sum(fantasy_points, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_fantasy_points = round(mean(round_fantasy_points), 2)) %>%
+  arrange(desc(mean_fantasy_points)) %>%
+  rename(Opposition = opposition_team, `Avg Fantasy Points` = mean_fantasy_points)
+
+```
+
+## Kicks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(kicks > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_kicks = sum(kicks, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_kicks = round(mean(round_kicks), 2)) %>%
+  arrange(desc(mean_kicks)) %>%
+  rename(Opposition = opposition_team, `Avg Kicks` = mean_kicks)
+
+```
+
+## Handballs
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(handballs > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_handballs = sum(handballs, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_handballs = round(mean(round_handballs), 2)) %>%
+  arrange(desc(mean_handballs)) %>%
+  rename(Opposition = opposition_team, `Avg Handballs` = mean_handballs)
+
+```
+
+
+## Disposals
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(disposals > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_disposals = sum(disposals, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_disposals = round(mean(round_disposals), 2)) %>%
+  arrange(desc(mean_disposals)) %>%
+  rename(Opposition = opposition_team, `Avg Disposals` = mean_disposals)
+
+
+```
+
+## Marks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(marks > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_marks = sum(marks, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_marks = round(mean(round_marks), 2)) %>%
+  arrange(desc(mean_marks)) %>%
+  rename(Opposition = opposition_team, `Avg Marks` = mean_marks)
+
+```
+
+## Tackles
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(tackles > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_tackles = sum(tackles, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_tackles = round(mean(round_tackles), 2)) %>%
+  arrange(desc(mean_tackles)) %>%
+  rename(Opposition = opposition_team, `Avg Tackles` = mean_tackles)
+
+
+```
+
+## Goals
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(goals > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_goals = sum(goals, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_goals = round(mean(round_goals), 2)) %>%
+  arrange(desc(mean_goals)) %>%
+  rename(Opposition = opposition_team, `Avg Goals` = mean_goals)
+
+
+```
+
+## Behinds
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(behinds > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_behinds = sum(behinds, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_behinds = round(mean(round_behinds), 2)) %>%
+  arrange(desc(mean_behinds)) %>%
+  rename(Opposition = opposition_team, `Avg Behinds` = mean_behinds)
+
+```
+
+## Hitouts
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(hitouts > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_hitouts = sum(hitouts, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_hitouts = round(mean(round_hitouts), 2)) %>%
+  arrange(desc(mean_hitouts)) %>%
+  rename(Opposition = opposition_team, `Avg Hitouts` = mean_hitouts)
+
+
+```
+
+## Frees For
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(freesFor > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_freesFor = sum(freesFor, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_freesFor = round(mean(round_freesFor), 2)) %>%
+  arrange(desc(mean_freesFor)) %>%
+  rename(Opposition = opposition_team, `Avg Frees For` = mean_freesFor)
+
+
+```
+
+## Frees Against
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(freesAgainst > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_freesAgainst = sum(freesAgainst, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_freesAgainst = round(mean(round_freesAgainst), 2)) %>%
+  arrange(desc(mean_freesAgainst)) %>%
+  rename(Opposition = opposition_team, `Avg Frees Against` = mean_freesAgainst)
+
+
+```
+
+:::
+
+# Advanced Category Leaders - Season
+
+::: panel-tabset
+
+## Contested Marks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(contestedMarks > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_contestedMarks = sum(contestedMarks, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_contestedMarks = round(mean(round_contestedMarks), 2)) %>%
+  arrange(desc(mean_contestedMarks)) %>%
+  rename(Opposition = opposition_team, `Avg Contested Marks` = mean_contestedMarks)
+
+
+```
+
+## Uncontested Marks
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(uncontestedMarks > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_uncontestedMarks = sum(uncontestedMarks, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_uncontestedMarks = round(mean(round_uncontestedMarks), 2)) %>%
+  arrange(desc(mean_uncontestedMarks)) %>%
+  rename(Opposition = opposition_team, `Avg Uncontested Marks` = mean_uncontestedMarks)
+
+
+```
+
+## Contested Possessions
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(contestedPossessions > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_contestedPossessions = sum(contestedPossessions, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_contestedPossessions = round(mean(round_contestedPossessions), 2)) %>%
+  arrange(desc(mean_contestedPossessions)) %>%
+  rename(Opposition = opposition_team, `Avg Contested Possessions` = mean_contestedPossessions)
+
+
+```
+
+## Uncontested Possessions
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(uncontestedPossessions > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_uncontestedPossessions = sum(uncontestedPossessions, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_uncontestedPossessions = round(mean(round_uncontestedPossessions), 2)) %>%
+  arrange(desc(mean_uncontestedPossessions)) %>%
+  rename(Opposition = opposition_team, `Avg Uncontested Possessions` = mean_uncontestedPossessions)
+
+
+```
+
+## Clangers
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(clangers > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_clangers = sum(clangers, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_clangers = round(mean(round_clangers), 2)) %>%
+  arrange(desc(mean_clangers)) %>%
+  rename(Opposition = opposition_team, `Avg Clangers` = mean_clangers)
+
+
+```
+
+## Turnovers
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(turnovers > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_turnovers = sum(turnovers, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_turnovers = round(mean(round_turnovers), 2)) %>%
+  arrange(desc(mean_turnovers)) %>%
+  rename(Opposition = opposition_team, `Avg Turnovers` = mean_turnovers)
+
+
+```
+
+## Inside 50s
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(inside50s > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_inside50s = sum(inside50s, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_inside50s = round(mean(round_inside50s), 2)) %>%
+  arrange(desc(mean_inside50s)) %>%
+  rename(Opposition = opposition_team, `Avg Inside 50s` = mean_inside50s)
+
+
+```
+
+## Rebound 50s
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(rebound50s > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_rebound50s = sum(rebound50s, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_rebound50s = round(mean(round_rebound50s), 2)) %>%
+  arrange(desc(mean_rebound50s)) %>%
+  rename(Opposition = opposition_team, `Avg Rebound 50s` = mean_rebound50s)
+
+
+```
+
+## Disposal Efficiency
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(disposalEfficiency > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_disposalEfficiency = mean(disposalEfficiency, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_disposalEfficiency = round(mean(round_disposalEfficiency), 2)) %>%
+  arrange(desc(mean_disposalEfficiency)) %>%
+  rename(Opposition = opposition_team, `Avg Disposal Efficiency` = mean_disposalEfficiency)
+
+
+```
+
+## Kick Efficiency
+
+```{r}
+#| echo: false
+#| message: false
+
+combined_stats_table %>%
+  filter(kick_efficiency > 0) %>%
+  group_by(opposition_team, round_number) %>%
+  summarise(round_kick_efficiency = mean(kick_efficiency, na.rm = TRUE)) %>%
+  group_by(opposition_team) %>%
+  summarise(mean_kick_efficiency = round(mean(round_kick_efficiency), 2)) %>%
+  arrange(desc(mean_kick_efficiency)) %>%
+  rename(Opposition = opposition_team, `Avg Kick Efficiency` = mean_kick_efficiency)
+
+
+```
+
+:::

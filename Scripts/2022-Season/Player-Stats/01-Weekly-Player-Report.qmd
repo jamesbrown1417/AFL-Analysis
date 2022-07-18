@@ -689,3 +689,4 @@ ruck_data %>%
          `Hitouts` = hitouts,
          `Hitout Win %` = hitoutWinPercentage)
 ```
+
