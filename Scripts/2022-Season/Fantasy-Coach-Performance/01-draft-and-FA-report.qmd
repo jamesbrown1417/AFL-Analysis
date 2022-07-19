@@ -18,18 +18,20 @@ editor: visual
 #| echo: false
 
 library(tidyverse)
+library(rvest)
 `%notin%` <- Negate(`%in%`)
 
 draft_recap <- read_csv("../../../Data/CSV-files/draft_recap_2022.csv")
 combined_stats_table <- read_rds("../../../Data/RDS-files/combined_stats_table_2022.rds")
 combined_stats_table_2021 <- read_rds("../../../Data/RDS-files/combined_stats_table_2021.rds")
+
+combined_stats_table <- combined_stats_table %>% filter(round_number < "Round 18")
 ```
 
 ```{r}
 #| label: data-setup
 #| include: false
 #| echo: false
-
 
 top_defenders <-
   combined_stats_table %>%
@@ -114,10 +116,6 @@ best_draft_picks <-
   filter(!is.na(pick)) %>%
   mutate(difference = pick - ranking) %>%
   arrange(desc(difference))
-
-best_FA_pickups <-
-  all_player_rankings %>%
-  filter(player_name %notin% draft_recap$player_name)
 
 ```
 
@@ -253,7 +251,131 @@ worst_pick_by_round <-
 
 ```
 
-## 10 Best Draft Picks
+```{r}
+#| echo: false
+#| include: false
+
+# Web scrape FA transactions from HTML files returned by selenium python script
+
+##%######################################################%##
+#                                                          #
+####             Read in HTML of team pages             ####
+#                                                          #
+##%######################################################%##
+
+#===============================================================================
+# Get list of files in Data/HTML-files folder
+#===============================================================================
+
+transaction_files <- dir("../../../Data/HTML-files/transactions")
+transaction_files <- sort(transaction_files)
+
+#===============================================================================
+# Create function that reads html and outputs players table
+#===============================================================================
+
+get_transactions <- function(html_path) {
+  # Read HTML from path
+  full_path <- paste("../../../Data/HTML-files/transactions/", html_path, sep = "")
+  html_source <- read_html(full_path)
+  
+  # Create players vector and return
+  transactions <-
+    html_source %>%
+    html_elements(".hJZdqq") %>%
+    html_text2()
+  
+  return(transactions)
+}
+
+##%######################################################%##
+#                                                          #
+####         Get list of scraped text (in form          ####
+####       of a character vector) for each round        ####
+#                                                          #
+##%######################################################%##
+
+transactions_by_round <- map(transaction_files, get_transactions)
+
+##%######################################################%##
+#                                                          #
+####      Function to extract transaction details       ####
+#                                                          #
+##%######################################################%##
+
+extract_transaction <- function(transaction_vector) {
+  
+# Process Strings
+transaction_vector <- str_remove_all(transaction_vector, "(\n)|(Uncertain)|(the Free Agent:)|(Close Circle Logo)|(Transactions)|(\\.)|(Injured)|(the Restricted Free Agent)")
+transaction_vector <- str_replace_all(transaction_vector, "(Defender)|(Forward)|(Midfielder)|(Ruck)|(:)", " ")
+transaction_vector <- str_replace_all(transaction_vector, "(Def)|(Fwd)|(Mid)|(Ruck)|(:)", " ")
+transaction_vector <- str_replace_all(transaction_vector, "/[ ]{1,}[ ]", "")
+transaction_vector <- str_replace_all(transaction_vector, "[ ]{2,}", " ")
+transaction_vector <- transaction_vector[str_detect(transaction_vector, "initiated and traded", negate = TRUE)]
+
+# Extract Dates
+dates <- str_extract_all(transaction_vector, "^.* 2022") %>% str_replace_all(" ", "-")
+
+# Extract Team
+team <- str_extract_all(transaction_vector, "(?<=2022)[A-Za-z4 ']{5,31}(?= selected| delisted)")
+
+# Get Selected Players
+selected <- str_extract_all(transaction_vector, "(?<=selected )[A-Za-z '-]{5,30}(?= And | $)")
+selected[sapply(selected, is_empty)] <- NA
+
+# Get Delisted Players
+delisted <- str_extract_all(transaction_vector, "(?<=delisted )[A-Za-z '-]{5,30}(?= $)")
+delisted[sapply(delisted, is_empty)] <- NA
+
+# Create Output Tibble
+selected <- tibble(date = dates, team = unlist(team), player_name = unlist(selected), type = "selected")
+delisted <- tibble(date = dates, team = unlist(team), player_name = unlist(delisted), type = "delisted")
+transaction_df <- bind_rows(selected, delisted) %>% filter(!is.na(player_name))
+transaction_df$date <- as.Date(transaction_df$date, "%d-%B-%Y")
+
+return(transaction_df)
+
+}
+
+##%######################################################%##
+#                                                          #
+####   Apply function to extract transasction details   ####
+####      to list of transaction character vectors      ####
+#                                                          #
+##%######################################################%##
+
+all_transactions <- map(transactions_by_round, extract_transaction)
+all_transactions <- bind_rows(all_transactions)
+
+##%######################################################%##
+#                                                          #
+####          Add Stats to transactions table           ####
+#                                                          #
+##%######################################################%##
+
+# Get averages
+fantasy_averages <-
+combined_stats_table %>%
+  filter(round_number < "Round 18") %>%
+  filter(TOG > 50) %>%
+  summarise(`Avg Points` = mean(fantasy_points), games_played = max(games_played)) %>%
+  mutate(player_name = str_replace(player_name, "\\.", "")) %>%
+  mutate(player_name = str_replace(player_name, "Paddy McCartin", "Patrick McCartin")) %>%
+  mutate(player_name = str_replace(player_name, "Josh Rachele", "Joshua Rachele"))
+
+# Join with main table
+all_transactions <-
+  all_transactions %>%
+  left_join(fantasy_averages)
+
+# Add Player Rankings
+all_transactions <-
+all_transactions %>%
+  left_join(all_player_rankings[, c("player_name", "ranking", "z_score")])
+```
+
+
+# 10 Best Draft Picks
 
 ```{r}
 #| echo: false
@@ -273,7 +395,7 @@ best_draft_picks %>%
 
 ```
 
-## Best Draft Picks By Round
+# Best Draft Picks By Round
 
 ```{r}
 #| echo: false
@@ -289,25 +411,7 @@ best_pick_by_round %>%
 
 ```
 
-## 10 Best FA Pickups
-
-```{r}
-#| echo: false
-
-best_FA_pickups %>%
-  filter(player_name != "Oscar McInerney") %>%
-  select(
-    Player = player_name,
-    Avg = avg_score,
-    `Z-Score` = z_score,
-    Games = games_played,
-    Rank = ranking
-  ) %>%
-  head(10)
-
-```
-
-## 10 Worst Draft Picks
+# 10 Worst Draft Picks
 
 ```{r}
 #| echo: false
@@ -327,7 +431,7 @@ worst_draft_picks %>%
 
 ```
 
-## Worst Draft Picks By Round
+# Worst Draft Picks By Round
 
 ```{r}
 #| echo: false
@@ -343,9 +447,9 @@ worst_pick_by_round %>%
 
 ```
 
-## Biggest Changes in Average Compared to 2021 Season
+# Biggest Changes in Average Compared to 2021 Season
 
-##### Min 5 games played in both seasons, injury affected scores (<50 % TOG) excluded
+##### Min 5 games played in both seasons, injury affected scores (\<50 % TOG) excluded
 
 ```{r}
 #| include: false
@@ -411,3 +515,221 @@ comparison %>%
   head(20)
 ```
 :::
+
+# Free Agency Analysis
+
+## Total Transactions By Team
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  filter(type == "selected") %>%
+  group_by(team) %>%
+  tally() %>%
+  arrange(desc(n)) %>%
+  select(Team = team, Count = n)
+```
+
+## Most Selected And Delisted Players
+
+::: panel-tabset
+
+## Selected
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  filter(type == "selected") %>%
+  group_by(player_name) %>%
+  tally() %>%
+  arrange(desc(n)) %>%
+  transmute(Player = player_name, Type = "Selected", Count = n) %>%
+  ungroup() %>%
+  arrange(desc(Count)) %>%
+  head(15)
+```
+
+## Delisted
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  filter(type == "delisted") %>%
+  group_by(player_name) %>%
+  tally() %>%
+  arrange(desc(n)) %>%
+  transmute(Player = player_name, Type = "Delisted", Count = n) %>%
+  ungroup() %>%
+  arrange(desc(Count)) %>%
+  head(15)
+```
+
+:::
+
+## Most Selected And Delisted Players By Team
+
+::: panel-tabset
+
+## Selected
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  filter(type == "selected") %>%
+  group_by(team, player_name) %>%
+  tally() %>%
+  group_by(team) %>%
+  arrange(desc(n)) %>%
+  slice(1) %>%
+  select(Team = team, Player = player_name, Count = n) %>%
+  ungroup() %>%
+  arrange(desc(Count))
+```
+
+## Delisted
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  filter(type == "delisted") %>%
+  group_by(team, player_name) %>%
+  tally() %>%
+  group_by(team) %>%
+  arrange(desc(n)) %>%
+  slice(1) %>%
+  select(Team = team, Player = player_name, Count = n) %>%
+  ungroup() %>%
+  arrange(desc(Count))
+```
+
+:::
+
+## Best FA Selections
+
+::: panel-tabset
+
+## By Overall Avg
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  arrange(date) %>%
+  group_by(team, player_name) %>%
+  filter(row_number() == n()) %>%
+  ungroup() %>%
+  filter(type == "selected") %>%
+  arrange(desc(`Avg Points`)) %>%
+  transmute(Date = date,
+         Team = team,
+         Player = player_name,
+         `Avg Points` = round(`Avg Points`, 2),
+         Games = games_played
+         ) %>%
+  filter(Player != "Tim English") %>%
+  head(15)
+  
+
+```
+
+## By Ranking
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  arrange(date) %>%
+  group_by(team, player_name) %>%
+  filter(row_number() == n()) %>%
+  ungroup() %>%
+  filter(type == "selected") %>%
+  arrange(ranking) %>%
+  select(
+    Date = date,
+    Team = team,
+    Player = player_name,
+    Rank = ranking,
+    `Z-Score` = z_score,
+    Games = games_played
+  ) %>%
+  filter(Player != "Tim English") %>%
+  head(15)
+  
+
+```
+
+:::
+
+## Worst Delistings
+
+::: panel-tabset
+
+## By Overall Avg
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  arrange(date) %>%
+  group_by(team, player_name) %>%
+  filter(row_number() == n()) %>%
+  ungroup() %>%
+  filter(type == "delisted") %>%
+  arrange(desc(`Avg Points`)) %>%
+  transmute(Date = date,
+         Team = team,
+         Player = player_name,
+         `Avg Points` = round(`Avg Points`, 2),
+         Games = games_played
+         ) %>%
+  filter(Player %notin% c("Tim English", "Darcy Parish", "Brodie Grundy", "Dyson Heppell")) %>%
+  head(15)
+
+```
+
+## By Ranking
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+all_transactions %>%
+  arrange(date) %>%
+  group_by(team, player_name) %>%
+  filter(row_number() == n()) %>%
+  ungroup() %>%
+  filter(type == "delisted") %>%
+  arrange(ranking) %>%
+  select(
+    Date = date,
+    Team = team,
+    Player = player_name,
+    Rank = ranking,
+    `Z-Score` = z_score,
+    Games = games_played
+  ) %>%
+  filter(Player %notin% c("Tim English", "Darcy Parish", "Brodie Grundy", "Dyson Heppell", "Oscar McInerney", "Rhys Stanley", "Shaun Higgins", "Jordan De Goey")) %>%
+  head(15)
+
+```
+
+:::
+
